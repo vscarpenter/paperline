@@ -8,6 +8,14 @@
     "name": "Vinny Carpenter",
     "url": "https://vinny.dev/"
   },
+  "homepage": "https://github.com/vscarpenter/paperline#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vscarpenter/paperline.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vscarpenter/paperline/issues"
+  },
   "keywords": [
     "design-system",
     "css",
@@ -16,6 +24,9 @@
     "components",
     "paperline"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "sideEffects": [
     "**/*.css"
   ],
@@ -23,7 +34,9 @@
     "src",
     "dist",
     "examples",
+    "scripts/build.mjs",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "exports": {
@@ -36,8 +49,10 @@
     "./dist/icons.global.jsx": "./dist/paperline-icons.global.jsx"
   },
   "scripts": {
+    "build": "node scripts/build.mjs",
     "docs": "python3 -m http.server 8000",
-    "test": "node scripts/check-package.mjs"
+    "test": "node scripts/check-package.mjs",
+    "prepublishOnly": "node scripts/build.mjs && node scripts/check-package.mjs"
   },
   "peerDependencies": {
     "react": ">=18"

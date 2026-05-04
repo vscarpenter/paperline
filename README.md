@@ -44,6 +44,8 @@ Load the fonts and CSS, then apply `pl-root` to your application shell.
 
 Paperline exports source JSX for React projects and keeps React as a peer dependency.
 
+> **Heads-up — JSX from `node_modules`.** The package's `exports."."` points at `src/index.jsx`, so your bundler must transform JSX inside `node_modules/paperline-design-system`. With Vite, add `optimizeDeps: { include: ["paperline-design-system"] }` and ensure `esbuild` JSX is enabled (default for `.jsx`). With Next.js, add `transpilePackages: ["paperline-design-system"]` to `next.config.js`. With webpack, include the package in your Babel/SWC `loader` rule's `include` list.
+
 ```jsx
 import "paperline-design-system/styles.css";
 import { I, PLBadge, PLButton, PLStat } from "paperline-design-system";
@@ -73,14 +75,29 @@ For prototypes or static pages, use the files in `dist/` with React, ReactDOM, a
 
 See [`docs/USAGE.md`](docs/USAGE.md) for an end-to-end guide: bundled-React vs. static-HTML setup, the full token cheat sheet, every component's prop signature, and a section on driving Paperline from coding agents like Claude Code and Codex.
 
+## Component Surface
+
+The current `PL*` primitives, all exported from `paperline-design-system`:
+
+- **Forms**: `PLButton`, `PLInput`, `PLTextarea`, `PLSelect`, `PLToggle`, `PLCheckbox`, `PLRadio`, `PLField`
+- **Display**: `PLBadge`, `PLTag`, `PLCard`, `PLDivider`, `PLAvatar`, `PLAvatarGroup`, `PLProgress`, `PLSpinner`, `PLSkeleton`, `PLAlert`, `PLEmptyState`, `PLStat`, `PLTable`, `PLToast`
+- **Navigation**: `PLTabs`, `PLBreadcrumbs`, `PLPagination`
+- **Layout**: `PLStack`, `PLCluster`, `PLGrid`
+- **Overlays**: `PLTooltip`, `PLMenu`, `PLModal`
+
+Form primitives wrap real `<input>` elements (visually hidden via `.pl-sr-only`), so they're keyboard-operable, screen-reader-friendly, and submit with `<form>`. `PLModal` traps Tab focus, locks body scroll, and restores focus on close.
+
 ## Local Review
 
 ```bash
-npm test
-npm run docs
+npm run build   # regenerates dist/ from src/
+npm test        # structural + parity check
+npm run docs    # serves the repo
 ```
 
-`npm test` verifies the package structure and docs references. `npm run docs` serves the repo at `http://localhost:8000`; open `docs/index.html` or `examples/browser.html`.
+`npm run build` regenerates the browser-global files in `dist/` from `src/`. `npm test` then verifies the package structure, the docs references, and that `dist/` is in sync with `src/`. `npm run docs` serves the repo at `http://localhost:8000`; open `docs/index.html` or `examples/browser.html`.
+
+> Files inside `dist/` are generated. Edit `src/` and run `npm run build` — never edit `dist/*` by hand.
 
 ## Dark Mode
 

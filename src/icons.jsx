@@ -1,7 +1,7 @@
 // Curated icon set — lucide-style line icons, 1.6 stroke, 20px default
 // All icons inherit currentColor; size via the `size` prop or CSS
 
-export const Icon = ({ children, size = 18, strokeWidth = 1.6, style, ...rest }) => (
+export const Icon = ({ children, size = 18, strokeWidth = 1.6, style, label, ...rest }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -12,6 +12,10 @@ export const Icon = ({ children, size = 18, strokeWidth = 1.6, style, ...rest })
     strokeWidth={strokeWidth}
     strokeLinecap="round"
     strokeLinejoin="round"
+    role={label ? "img" : undefined}
+    aria-label={label || undefined}
+    aria-hidden={label ? undefined : true}
+    focusable="false"
     style={{ display: "inline-block", flexShrink: 0, ...style }}
     {...rest}
   >

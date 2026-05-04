@@ -99,6 +99,11 @@ const App = () => {
   const [tog, setTog] = useState(true);
   const [chk, setChk] = useState(true);
   const [rad, setRad] = useState("a");
+  const [tab2, setTab2] = useState("a");
+  const [page, setPage] = useState(3);
+  const [sel, setSel] = useState("designer");
+  const [fieldVal, setFieldVal] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   React.useEffect(() => {
     document.body.classList.toggle("pl-dark", tab === "dark");
@@ -124,7 +129,7 @@ const App = () => {
             Paper surfaces, refined plum accent, an editorial serif paired with a humanist sans, a curated 1.6-stroke icon set, layered warm shadows. Built on CSS variables and small, composable React primitives — port to any framework.
           </p>
           <div style={{ display: "flex", gap: 10, marginTop: 28, flexWrap: "wrap" }}>
-            {[["Tokens", "60+"], ["Components", "16"], ["Icons", "32+"], ["Themes", "Light · Dark"], ["License", "Yours"]].map(([k, v]) => (
+            {[["Tokens", "70+"], ["Components", "31"], ["Icons", "38"], ["Themes", "Light · Dark"], ["License", "Yours"]].map(([k, v]) => (
               <div key={k} style={{ display: "inline-flex", alignItems: "baseline", gap: 8, padding: "8px 12px", background: "var(--pl-paper-card)", border: "1px solid var(--pl-hairline-strong)", borderRadius: 8, boxShadow: "var(--pl-shadow-xs)" }}>
                 <span className="pl-eyebrow" style={{ fontSize: 10 }}>{k}</span>
                 <span className="pl-mono" style={{ fontSize: 11.5, color: "var(--pl-ink-1)", fontWeight: 600 }}>{v}</span>
@@ -244,7 +249,7 @@ const App = () => {
         </div>
       </Section>
 
-      <Section num="05 — Components" title="Small primitives that compose." blurb="Sixteen components, all built on the tokens above. Pair, stack, swap — the visual language holds.">
+      <Section num="05 — Components" title="Small primitives that compose." blurb="Thirty-one primitives, all built on the tokens above. Pair, stack, swap — the visual language holds.">
         <div className="grid-2">
           <div className="demo-cell">
             <div className="label">Buttons</div>
@@ -259,6 +264,10 @@ const App = () => {
                 <PLButton size="sm">Small</PLButton>
                 <PLButton size="md">Medium</PLButton>
                 <PLButton size="lg">Large</PLButton>
+              </div>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <PLButton kind="accentSoft">Accent soft</PLButton>
+                <PLButton kind="primary" disabled>Disabled</PLButton>
               </div>
             </div>
           </div>
@@ -295,7 +304,7 @@ const App = () => {
           <div className="demo-cell">
             <div className="label">Tabs & progress</div>
             <div className="body" style={{ width: "100%", alignItems: "stretch" }}>
-              <PLTabs items={[{value:"a",label:"Overview"},{value:"b",label:"Activity"},{value:"c",label:"Settings"}]} value="a" onChange={()=>{}} />
+              <PLTabs items={[{value:"a",label:"Overview"},{value:"b",label:"Activity"},{value:"c",label:"Settings"}]} value={tab2} onChange={setTab2} label="Demo tabs" />
               <PLProgress value={62} label="Project completion" />
             </div>
           </div>
@@ -360,16 +369,204 @@ const App = () => {
           <div className="demo-cell">
             <div className="label">Toasts</div>
             <div className="body">
-              <PLToast tone="ok" icon={I.Check} title="Project created" action="View" />
-              <PLToast tone="danger" icon={I.Alert} title="Couldn't connect" action="Retry" />
+              <PLToast tone="ok" icon={I.Check} title="Project created" action={{ label: "View", onClick: () => {} }} />
+              <PLToast tone="danger" icon={I.Alert} title="Couldn't connect" action={{ label: "Retry", onClick: () => {} }} />
             </div>
           </div>
         </div>
       </Section>
 
+      <Section num="05b — Forms & overlays" title="The rest of the kit." blurb="Real form controls, layered overlays, layout primitives, and feedback states. Everything below is keyboard-friendly and screen-reader-aware out of the box.">
+        <div className="grid-2">
+
+          <div className="demo-cell">
+            <div className="label">Field wrapper</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch" }}>
+              <PLField label="Workspace name" helper="Lowercase, hyphens, no spaces." required>
+                <PLInput value={fieldVal} onChange={(e) => setFieldVal(e.target.value)} placeholder="acme-design" />
+              </PLField>
+              <PLField label="Notes" error={fieldVal.length > 24 ? "Keep it under 24 characters." : undefined}>
+                <PLTextarea rows={2} placeholder="Optional context for the team…" />
+              </PLField>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Select</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch" }}>
+              <PLField label="Role">
+                <PLSelect
+                  value={sel}
+                  onChange={(e) => setSel(e.target.value)}
+                  options={[
+                    { value: "designer",  label: "Designer" },
+                    { value: "engineer",  label: "Engineer" },
+                    { value: "pm",        label: "Product manager" },
+                    { value: "research",  label: "Researcher" },
+                  ]}
+                />
+              </PLField>
+              <div style={{ fontSize: 12, color: "var(--pl-ink-3)" }}>Selected: <span className="pl-mono">{sel}</span></div>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Empty state</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch" }}>
+              <PLEmptyState
+                icon={I.Inbox}
+                title="No tasks yet"
+                description="Create your first task to start tracking work for this project."
+                action={<PLButton kind="primary" icon={I.Plus} size="sm">New task</PLButton>}
+              />
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Spinner & skeletons</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch", gap: 14 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <PLSpinner size={18} />
+                <span style={{ fontSize: 12.5, color: "var(--pl-ink-3)" }}>Loading workspace…</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <PLSkeleton width="60%" height={14} />
+                <PLSkeleton width="90%" />
+                <PLSkeleton width="75%" />
+              </div>
+            </div>
+          </div>
+
+          <div className="demo-cell" style={{ gridColumn: "span 2" }}>
+            <div className="label">Breadcrumbs · Pagination · Divider</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch", gap: 16 }}>
+              <PLBreadcrumbs items={[
+                { label: "Workspace", href: "#" },
+                { label: "Projects",  href: "#" },
+                { label: "Paperline · v1.0" },
+              ]} />
+              <PLDivider label="Page 3 of 12" />
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <PLPagination page={page} total={12} onChange={setPage} />
+              </div>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Tooltip</div>
+            <div className="body" style={{ width: "100%", alignItems: "center", justifyContent: "center", gap: 18, flexDirection: "row" }}>
+              <PLTooltip label="Top tooltip" side="top">
+                <PLButton kind="secondary">Top</PLButton>
+              </PLTooltip>
+              <PLTooltip label="Right tooltip" side="right">
+                <PLButton kind="secondary">Right</PLButton>
+              </PLTooltip>
+              <PLTooltip label="Bottom tooltip" side="bottom">
+                <PLButton kind="secondary">Bottom</PLButton>
+              </PLTooltip>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Menu (dropdown)</div>
+            <div className="body" style={{ width: "100%", alignItems: "flex-start" }}>
+              <PLMenu
+                trigger={<PLButton kind="secondary" iconRight={I.ChevDown}>Actions</PLButton>}
+                items={[
+                  { value: "edit",    label: "Edit",     icon: I.Edit,    shortcut: "⌘E" },
+                  { value: "share",   label: "Share",    icon: I.Share,   shortcut: "⌘⇧S" },
+                  { value: "archive", label: "Archive",  icon: I.Archive },
+                  { divider: true },
+                  { value: "delete",  label: "Delete",   icon: I.Trash, danger: true },
+                ]}
+                onSelect={() => {}}
+              />
+              <div style={{ fontSize: 11.5, color: "var(--pl-ink-4)", marginTop: 8 }}>
+                Click outside or press <span className="pl-mono">Esc</span> to close.
+              </div>
+            </div>
+          </div>
+
+          <div className="demo-cell" style={{ gridColumn: "span 2" }}>
+            <div className="label">Modal</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch", gap: 12 }}>
+              <div style={{ fontSize: 13, color: "var(--pl-ink-2)" }}>
+                Traps Tab focus, locks body scroll, restores focus on close. Press <span className="pl-mono">Esc</span> or click the overlay to dismiss.
+              </div>
+              <div>
+                <PLButton kind="primary" onClick={() => setModalOpen(true)}>Open dialog</PLButton>
+              </div>
+              <PLModal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                title="Invite a teammate"
+                description="They'll get access to this workspace's projects and design tokens."
+                footer={
+                  <>
+                    <PLButton kind="ghost" onClick={() => setModalOpen(false)}>Cancel</PLButton>
+                    <PLButton kind="primary" onClick={() => setModalOpen(false)}>Send invite</PLButton>
+                  </>
+                }
+              >
+                <PLStack gap={12}>
+                  <PLField label="Email">
+                    <PLInput type="email" placeholder="teammate@company.com" icon={I.Inbox} />
+                  </PLField>
+                  <PLField label="Role">
+                    <PLSelect
+                      value={sel}
+                      onChange={(e) => setSel(e.target.value)}
+                      options={[
+                        { value: "designer", label: "Designer" },
+                        { value: "engineer", label: "Engineer" },
+                        { value: "pm",       label: "Product manager" },
+                      ]}
+                    />
+                  </PLField>
+                </PLStack>
+              </PLModal>
+            </div>
+          </div>
+
+          <div className="demo-cell" style={{ gridColumn: "span 2" }}>
+            <div className="label">Layout primitives</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch", gap: 18 }}>
+              <div>
+                <div style={{ fontSize: 11, color: "var(--pl-ink-4)", marginBottom: 6, fontFamily: "var(--pl-font-mono)" }}>PLCluster · gap=8</div>
+                <PLCluster gap={8}>
+                  <PLBadge tone="accent">design</PLBadge>
+                  <PLBadge tone="ok">shipped</PLBadge>
+                  <PLBadge tone="warn">review</PLBadge>
+                  <PLBadge tone="info">draft</PLBadge>
+                </PLCluster>
+              </div>
+              <PLDivider />
+              <div>
+                <div style={{ fontSize: 11, color: "var(--pl-ink-4)", marginBottom: 6, fontFamily: "var(--pl-font-mono)" }}>PLGrid · cols=3 · gap=12</div>
+                <PLGrid cols={3} gap={12}>
+                  <PLStat label="Open"  value="42"  tone="accent" />
+                  <PLStat label="Done"  value="318" tone="ok" />
+                  <PLStat label="Stuck" value="3"   tone="danger" />
+                </PLGrid>
+              </div>
+              <PLDivider />
+              <div>
+                <div style={{ fontSize: 11, color: "var(--pl-ink-4)", marginBottom: 6, fontFamily: "var(--pl-font-mono)" }}>PLStack · gap=6</div>
+                <PLStack gap={6}>
+                  <span style={{ fontSize: 12, color: "var(--pl-ink-2)" }}>Stack stacks vertically.</span>
+                  <span style={{ fontSize: 12, color: "var(--pl-ink-3)" }}>Each child gets the same gap.</span>
+                  <span style={{ fontSize: 12, color: "var(--pl-ink-4)" }}>No magic — it's a flex column with a gap.</span>
+                </PLStack>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </Section>
+
       <Section num="06 — Iconography" title="One stroke. One set." blurb="Curated 24×24 line icons at 1.6 stroke. Use them with currentColor; pair with a categorical dot for personality.">
         <div className="grid-8">
-          {["Home","Search","Filter","Plus","Calendar","Tag","Flag","Clock","Alert","Edit","Share","Move","Archive","Trash","Settings","Help","Info","Shield","Download","Upload","Sun","Moon","Check","X","Inbox","Layers","Briefcase","Rocket","Megaphone","Sprout","Book","Sparkles"].map(name => (
+          {["Home","Search","Filter","Plus","Calendar","Tag","Flag","Clock","Alert","Edit","Share","Move","Archive","Trash","Settings","Help","Info","Shield","Download","Upload","Sun","Moon","Check","X","Inbox","Layers","Briefcase","Rocket","Megaphone","Sprout","Book","Sparkles","ChevLeft","ChevRight","ChevUp","ChevDown","More","GripDots"].map(name => (
             <div key={name} className="icon-cell">
               <span style={{ color: "var(--pl-ink-2)" }}>{React.createElement(I[name], { size: 20 })}</span>
               <span className="nm">{name}</span>

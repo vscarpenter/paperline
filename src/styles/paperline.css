@@ -108,6 +108,24 @@
   --pl-z-overlay:  900;
   --pl-z-modal:    1000;
   --pl-z-toast:    1100;
+  --pl-z-tooltip:  1200;
+
+  /* === Type scale (for components — utility classes are still available) */
+  --pl-text-xs:   11px;
+  --pl-text-sm:   12px;
+  --pl-text-base: 13px;
+  --pl-text-md:   13.5px;
+  --pl-text-lg:   16px;
+  --pl-text-xl:   22px;
+
+  /* === Semantic form tokens ========================================== */
+  --pl-field-bg:           var(--pl-paper-card);
+  --pl-field-border:       var(--pl-hairline-strong);
+  --pl-field-border-hover: var(--pl-ink-4);
+  --pl-field-border-focus: var(--pl-accent-500);
+  --pl-field-text:         var(--pl-ink-1);
+  --pl-field-placeholder:  var(--pl-ink-4);
+  --pl-field-disabled-bg:  var(--pl-paper-1);
 }
 
 /* === Dark mode ======================================================= */
@@ -152,6 +170,14 @@
   --pl-shadow-lg:   0 4px 8px rgba(0,0,0,0.45), 0 12px 28px rgba(0,0,0,0.4);
   --pl-shadow-xl:   0 8px 16px rgba(0,0,0,0.5), 0 24px 48px rgba(0,0,0,0.5);
   --pl-shadow-lift: 0 12px 24px rgba(0,0,0,0.6), 0 32px 60px rgba(0,0,0,0.7);
+
+  --pl-field-bg:           var(--pl-paper-card);
+  --pl-field-border:       var(--pl-hairline-strong);
+  --pl-field-border-hover: var(--pl-ink-3);
+  --pl-field-border-focus: var(--pl-accent-500);
+  --pl-field-text:         var(--pl-ink-1);
+  --pl-field-placeholder:  var(--pl-ink-4);
+  --pl-field-disabled-bg:  var(--pl-paper-1);
 }
 
 /* === Base reset for the design system surface ======================== */
@@ -181,3 +207,51 @@
 .pl-small   { font-family: var(--pl-font-sans);  font-size: 12px; line-height: 1.5; color: var(--pl-ink-3); }
 
 ::selection { background: var(--pl-accent-200); color: var(--pl-accent-700); }
+
+/* === Focus ring (applied to component classes) ====================== */
+.pl-btn:focus-visible,
+.pl-field:focus-within,
+.pl-tab:focus-visible,
+.pl-iconbtn:focus-visible,
+.pl-menu-item:focus-visible,
+.pl-link:focus-visible,
+.pl-page-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--pl-focus);
+}
+.pl-btn--danger:focus-visible {
+  box-shadow: var(--pl-focus-danger);
+}
+.pl-checkbox:focus-within .pl-checkbox-box,
+.pl-radio:focus-within .pl-radio-dot,
+.pl-toggle:focus-within .pl-toggle-track {
+  box-shadow: var(--pl-focus);
+}
+
+/* === Visually-hidden helper for accessible-but-invisible inputs ===== */
+.pl-sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+
+/* === Skeleton shimmer animation ===================================== */
+@keyframes pl-skeleton {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes pl-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* === Reduced motion ================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

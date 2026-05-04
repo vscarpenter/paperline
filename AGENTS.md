@@ -6,11 +6,12 @@ Paperline is a static-first design-system package. Source files live in `src/`: 
 
 ## Build, Test, and Development Commands
 
-- `npm test`: runs `scripts/check-package.mjs` to verify required files and docs references.
+- `npm run build`: regenerates `dist/*` from `src/` via `scripts/build.mjs`. Run after any change to `src/components.jsx`, `src/icons.jsx`, or `src/styles/paperline.css`.
+- `npm test`: runs `scripts/check-package.mjs`. Verifies required files, docs references, src↔dist parity, and that every `PL*` export appears in `src/index.jsx`, the `Object.assign(window, …)` block, and the dist artifact.
 - `npm run docs`: serves the repository with `python3 -m http.server 8000`.
 - Open `docs/index.html` for the full spec, or `examples/browser.html` for the smallest static integration.
 
-There is no bundler step today. Keep `dist/` aligned manually when changing source files used by browser demos.
+`dist/` is generated. Do not edit it by hand — re-run `npm run build`.
 
 ## Coding Style & Naming Conventions
 
@@ -28,4 +29,4 @@ Use short imperative commit messages such as `Add table density tokens` or `Refi
 
 ## Agent-Specific Instructions
 
-Preserve the static distribution model unless asked to add a bundler. If source JSX behavior changes, update the matching `dist/*.global.jsx` file or document why it intentionally diverges.
+Preserve the static distribution model. Source JSX changes must be paired with `npm run build` (which regenerates `dist/*.global.jsx`) and `npm test` (which fails if anything in `dist/` drifted). Never hand-edit `dist/`. If you add a new `PL*` primitive, also add it to `src/index.jsx` and to the `Object.assign(window, …)` block in `src/components.jsx`.
