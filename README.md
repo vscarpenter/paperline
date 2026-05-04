@@ -35,7 +35,9 @@ Open these in a browser (`npm run docs` → `http://localhost:8000`) to see the 
 | [`examples/browser.html`](examples/browser.html) | Minimal single-card integration — the smallest possible starting point. |
 | [`docs/index.html`](docs/index.html) | Full design-system spec: every token, component, and icon documented interactively. |
 
-> **Screenshots** — once the repo is hosted, take browser screenshots of the three example pages and drop them in `meta/screenshots/`. Reference them here with `![Dashboard](meta/screenshots/dashboard.png)` etc. so GitHub visitors see the visual style at a glance.
+[![Dashboard example](meta/dashboard.png)](examples/dashboard.html)
+
+[![Settings example](meta/settings.png)](examples/settings.html)
 
 ## Use the Tokens
 
