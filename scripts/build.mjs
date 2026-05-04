@@ -1,8 +1,9 @@
-// Paperline build — transforms src/ JSX + CSS into the browser-global dist/ files.
-// No deps. Uses string transforms keyed to specific anchors in each source file.
-// If transforms break, the file shape changed in src/ — update the anchors here.
+// Paperline build — two passes:
+//   1. String-transform src/ JSX into browser-global dist/ files (no deps, Babel Standalone target).
+//   2. esbuild compiles src/ JSX into standard ESM + CJS for npm consumers.
+// If the string transforms break, the file shape changed in src/ — update the anchors here.
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = process.cwd();
@@ -69,4 +70,28 @@ if (isCheck) {
     process.exit(1);
   }
   console.log("dist/ is in sync with src/.");
+}
+
+// ── Pass 2: esbuild — standard ESM + CJS for npm consumers ─────────────────
+if (!isCheck) {
+  const { build } = await import("esbuild");
+
+  const entryPoints = ["src/index.jsx", "src/components.jsx", "src/icons.jsx"];
+  const external = ["react", "react/jsx-runtime"];
+  const shared = { bundle: true, external, jsx: "automatic", logLevel: "warning" };
+
+  mkdirSync(join(ROOT, "dist/esm"), { recursive: true });
+  mkdirSync(join(ROOT, "dist/cjs"), { recursive: true });
+
+  await build({ ...shared, entryPoints, format: "esm", outdir: "dist/esm" });
+  console.log("built dist/esm/ (ESM)");
+
+  await build({
+    ...shared,
+    entryPoints,
+    format: "cjs",
+    outdir: "dist/cjs",
+    outExtension: { ".js": ".cjs" },
+  });
+  console.log("built dist/cjs/ (CJS)");
 }

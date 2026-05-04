@@ -61,13 +61,11 @@ Load the fonts and CSS, then apply `pl-root` to your application shell.
 
 ## Use the React Primitives
 
-Paperline exports source JSX for React projects and keeps React as a peer dependency.
-
-> **Heads-up — JSX from `node_modules`.** The package's `exports."."` points at `src/index.jsx`, so your bundler must transform JSX inside `node_modules/paperline-design-system`. With Vite, add `optimizeDeps: { include: ["paperline-design-system"] }` and ensure `esbuild` JSX is enabled (default for `.jsx`). With Next.js, add `transpilePackages: ["paperline-design-system"]` to `next.config.js`. With webpack, include the package in your Babel/SWC `loader` rule's `include` list.
+Paperline exports pre-compiled ESM and CJS and keeps React as a peer dependency. No bundler configuration needed.
 
 ```jsx
-import "paperline-design-system/styles.css";
-import { I, PLBadge, PLButton, PLStat } from "paperline-design-system";
+import "paperline/styles.css";
+import { I, PLBadge, PLButton, PLStat } from "paperline";
 
 export function DashboardHeader() {
   return (
@@ -96,7 +94,7 @@ See [`docs/USAGE.md`](docs/USAGE.md) for an end-to-end guide: bundled-React vs. 
 
 ## Component Surface
 
-The current `PL*` primitives, all exported from `paperline-design-system`:
+The current `PL*` primitives, all exported from `paperline`:
 
 - **Forms**: `PLButton`, `PLInput`, `PLTextarea`, `PLSelect`, `PLToggle`, `PLCheckbox`, `PLRadio`, `PLField`
 - **Display**: `PLBadge`, `PLTag`, `PLCard`, `PLDivider`, `PLAvatar`, `PLAvatarGroup`, `PLProgress`, `PLSpinner`, `PLSkeleton`, `PLAlert`, `PLEmptyState`, `PLStat`, `PLTable`, `PLToast`

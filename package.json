@@ -1,5 +1,5 @@
 {
-  "name": "paperline-design-system",
+  "name": "paperline",
   "version": "1.0.0",
   "description": "Paperline is a warm, editorial design system for any app.",
   "type": "module",
@@ -39,11 +39,22 @@
     "CHANGELOG.md",
     "LICENSE"
   ],
+  "main": "./dist/cjs/index.cjs",
   "exports": {
-    ".": "./src/index.jsx",
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs",
+      "default": "./dist/esm/index.js"
+    },
     "./styles.css": "./src/styles/paperline.css",
-    "./components": "./src/components.jsx",
-    "./icons": "./src/icons.jsx",
+    "./components": {
+      "import": "./dist/esm/components.js",
+      "require": "./dist/cjs/components.cjs"
+    },
+    "./icons": {
+      "import": "./dist/esm/icons.js",
+      "require": "./dist/cjs/icons.cjs"
+    },
     "./dist/paperline.css": "./dist/paperline.css",
     "./dist/components.global.jsx": "./dist/paperline-components.global.jsx",
     "./dist/icons.global.jsx": "./dist/paperline-icons.global.jsx"
@@ -56,5 +67,8 @@
   },
   "peerDependencies": {
     "react": ">=18"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
   }
 }

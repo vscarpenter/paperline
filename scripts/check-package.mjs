@@ -15,6 +15,14 @@ const required = [
   "dist/paperline.css",
   "dist/paperline-components.global.jsx",
   "dist/paperline-icons.global.jsx",
+  // compiled ESM outputs
+  "dist/esm/index.js",
+  "dist/esm/components.js",
+  "dist/esm/icons.js",
+  // compiled CJS outputs
+  "dist/cjs/index.cjs",
+  "dist/cjs/components.cjs",
+  "dist/cjs/icons.cjs",
   "scripts/build.mjs",
   "docs/index.html",
   "examples/browser.html",
@@ -75,6 +83,14 @@ const iconKeys = [...srcIcons.matchAll(/^\s{2}([A-Z][A-Za-z]+):\s*\(/gm)].map((m
 const missingIcons = iconKeys.filter((k) => !distIcons.includes(`${k}:`));
 if (missingIcons.length) {
   console.error(`dist/paperline-icons.global.jsx missing icons:\n${missingIcons.map((k) => `- ${k}`).join("\n")}`);
+  process.exit(1);
+}
+
+// Exports map sanity: package.json must point at compiled outputs, not raw src JSX.
+const pkg = JSON.parse(readFileSync("package.json", "utf8"));
+const mainEntry = pkg.exports?.["."]?.import ?? pkg.main ?? "";
+if (mainEntry.includes("src/")) {
+  console.error(`package.json exports["."] still points at src/ (${mainEntry}). Update to dist/esm/index.js.`);
   process.exit(1);
 }
 

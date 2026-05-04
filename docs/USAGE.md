@@ -10,7 +10,7 @@ Paperline ships in two shapes from the same repo:
 
 | You have… | Use this | What loads |
 | --- | --- | --- |
-| A bundled React app (Vite, Next, Remix, CRA) | `src/` ESM entry | `import { PLButton, I } from "paperline-design-system"` + `import "paperline-design-system/styles.css"` |
+| A bundled React app (Vite, Next, Remix, CRA) | compiled ESM/CJS | `import { PLButton, I } from "paperline"` + `import "paperline/styles.css"` |
 | A static HTML page or prototype | `dist/` browser globals | Babel Standalone parses `dist/*.global.jsx`; components attach to `window` |
 
 Either way you need the three Google Fonts (Instrument Sans, Instrument Serif, JetBrains Mono) and a wrapping element with class `pl-root`.
@@ -18,13 +18,13 @@ Either way you need the three Google Fonts (Instrument Sans, Instrument Serif, J
 ### React app
 
 ```bash
-npm install paperline-design-system react react-dom
+npm install paperline react react-dom
 ```
 
 ```jsx
 // app entry
-import "paperline-design-system/styles.css";
-import { PLButton, PLCard, PLStat, I } from "paperline-design-system";
+import "paperline/styles.css";
+import { PLButton, PLCard, PLStat, I } from "paperline";
 
 export default function Dashboard() {
   return (
@@ -124,7 +124,7 @@ Utility classes on `.pl-root`: `pl-eyebrow`, `pl-display`, `pl-h1`, `pl-h2`, `pl
 
 ## 3. Component reference
 
-All components are exported from `paperline-design-system` and prefixed `PL`. Every variant prop is a **string union** — use the exact strings below.
+All components are exported from `paperline` and prefixed `PL`. Every variant prop is a **string union** — use the exact strings below.
 
 | Component | Key props |
 | --- | --- |
@@ -149,7 +149,7 @@ All components are exported from `paperline-design-system` and prefixed `PL`. Ev
 All icons live under the `I` namespace and are passed as **components**, not elements:
 
 ```jsx
-import { I } from "paperline-design-system";
+import { I } from "paperline";
 
 <PLButton icon={I.Plus}>Add</PLButton>          // ✅
 <PLButton icon={<I.Plus />}>Add</PLButton>      // ❌ wrong shape
@@ -169,8 +169,8 @@ Paste this once at the start of a session:
 
 ```
 We use the Paperline design system. Rules:
-- Wrap the app in <div className="pl-root"> and import "paperline-design-system/styles.css".
-- Use <PLButton>, <PLCard>, <PLBadge>, <PLInput>, <PLAlert>, <PLStat>, <PLTabs>, <PLTable>, <PLToast>, <PLAvatar>, <PLProgress>, <PLToggle>, <PLCheckbox>, <PLRadio>, <PLTag> from "paperline-design-system" instead of building primitives.
+- Wrap the app in <div className="pl-root"> and import "paperline/styles.css".
+- Use <PLButton>, <PLCard>, <PLBadge>, <PLInput>, <PLAlert>, <PLStat>, <PLTabs>, <PLTable>, <PLToast>, <PLAvatar>, <PLProgress>, <PLToggle>, <PLCheckbox>, <PLRadio>, <PLTag> from "paperline" instead of building primitives.
 - Pass icons as components: icon={I.Plus}, never <I.Plus />.
 - Variant props are string unions. Use exactly: PLButton kind = primary|secondary|ghost|danger|accentSoft. PLBadge/PLAlert tone = ok|warn|danger|info (Badge also: neutral|accent).
 - For colors, spacing, radius, shadow, type — reference var(--pl-*) tokens. Never hardcode hex.
