@@ -1,0 +1,45 @@
+{
+  "name": "paperline-design-system",
+  "version": "1.0.0",
+  "description": "Paperline is a warm, editorial design system for any app.",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Vinny Carpenter",
+    "url": "https://vinny.dev/"
+  },
+  "keywords": [
+    "design-system",
+    "css",
+    "react",
+    "tokens",
+    "components",
+    "paperline"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "src",
+    "dist",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": "./src/index.jsx",
+    "./styles.css": "./src/styles/paperline.css",
+    "./components": "./src/components.jsx",
+    "./icons": "./src/icons.jsx",
+    "./dist/paperline.css": "./dist/paperline.css",
+    "./dist/components.global.jsx": "./dist/paperline-components.global.jsx",
+    "./dist/icons.global.jsx": "./dist/paperline-icons.global.jsx"
+  },
+  "scripts": {
+    "docs": "python3 -m http.server 8000",
+    "test": "node scripts/check-package.mjs"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  }
+}

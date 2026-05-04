@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paperline Browser Example</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../dist/paperline.css" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: var(--pl-paper-0);
+      font-family: var(--pl-font-sans);
+    }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+</head>
+<body class="pl-root">
+  <main id="root"></main>
+  <script type="text/babel" src="../dist/paperline-icons.global.jsx"></script>
+  <script type="text/babel" src="../dist/paperline-components.global.jsx"></script>
+  <script type="text/babel">
+    const Example = () => (
+      <PLCard style={{ width: 360 }}>
+        <div className="pl-eyebrow">Paperline</div>
+        <h1 className="pl-serif" style={{ margin: "8px 0", fontSize: 34, fontWeight: 400 }}>
+          Warm editorial UI.
+        </h1>
+        <p className="pl-body" style={{ margin: "0 0 18px", color: "var(--pl-ink-3)" }}>
+          Use the CSS tokens directly, or compose with the React primitives.
+        </p>
+        <PLButton icon={I.Plus}>Create project</PLButton>
+      </PLCard>
+    );
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<Example />);
+  </script>
+</body>
+</html>

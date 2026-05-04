@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paperline — Warm Editorial Design System</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../dist/paperline.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--pl-paper-0); font-family: var(--pl-font-sans); }
+  .ds-section { padding: 56px 64px; border-bottom: 1px solid var(--pl-hairline); }
+  .ds-section-inner { max-width: 1200px; margin: 0 auto; }
+  .ds-grid { display: grid; gap: 48px; grid-template-columns: 280px 1fr; align-items: start; }
+  .ds-side { position: sticky; top: 32px; }
+  .ds-side .num { font-family: var(--pl-font-mono); font-size: 11px; color: var(--pl-accent-500); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; }
+  .ds-side h2 { font-family: var(--pl-font-serif); font-size: 32px; line-height: 1.05; letter-spacing: -0.02em; font-weight: 400; color: var(--pl-ink-1); margin: 8px 0 12px; }
+  .ds-side p { font-size: 13px; line-height: 1.6; color: var(--pl-ink-3); margin: 0; }
+  .swatch { display:flex; flex-direction:column; }
+  .swatch .chip { height: 80px; border-radius: 8px; border: 1px solid var(--pl-hairline); display:flex; align-items: flex-end; padding: 10px; }
+  .swatch .chip span { font-family: var(--pl-font-mono); font-size: 10.5px; font-weight: 500; }
+  .swatch .meta { margin-top: 8px; }
+  .swatch .name { font-size: 12.5px; color: var(--pl-ink-1); font-weight: 600; }
+  .swatch .var  { font-family: var(--pl-font-mono); font-size: 10.5px; color: var(--pl-ink-4); margin-top: 1px; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .grid-7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .grid-8 { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .group-h { font-size: 11px; font-weight: 600; color: var(--pl-ink-4); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  .demo-cell { background: var(--pl-paper-card); border: 1px solid var(--pl-hairline-strong); border-radius: 12px; padding: 24px; box-shadow: var(--pl-shadow-xs); display: flex; flex-direction: column; gap: 16px; min-height: 140px; }
+  .demo-cell .label { font-size: 10.5px; font-weight: 600; color: var(--pl-ink-4); letter-spacing: 0.14em; text-transform: uppercase; }
+  .demo-cell .body { flex: 1; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; justify-content: center; }
+  .type-row { display: grid; grid-template-columns: 180px 1fr 220px; gap: 24px; padding: 20px 0; border-bottom: 1px solid var(--pl-hairline); align-items: baseline; }
+  .type-row .name { font-size: 12.5px; color: var(--pl-ink-1); font-weight: 600; }
+  .type-row .meta { font-family: var(--pl-font-mono); font-size: 10.5px; color: var(--pl-ink-4); margin-top: 2px; }
+  .type-row .css  { font-family: var(--pl-font-mono); font-size: 10.5px; color: var(--pl-ink-3); }
+  .icon-cell { background: var(--pl-paper-card); border: 1px solid var(--pl-hairline); border-radius: 10px; padding: 14px; display:flex; flex-direction: column; align-items:center; gap: 8px; }
+  .icon-cell .nm { font-family: var(--pl-font-mono); font-size: 10px; color: var(--pl-ink-4); }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body class="pl-root">
+<div id="root"></div>
+
+<script type="text/babel" src="../dist/paperline-icons.global.jsx"></script>
+<script type="text/babel" src="../dist/paperline-components.global.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+const Section = ({ num, title, blurb, children }) => (
+  <section className="ds-section">
+    <div className="ds-section-inner">
+      <div className="ds-grid">
+        <div className="ds-side">
+          <div className="num">{num}</div>
+          <h2>{title}</h2>
+          <p>{blurb}</p>
+        </div>
+        <div>{children}</div>
+      </div>
+    </div>
+  </section>
+);
+
+const Swatch = ({ name, value, varName, ink = "dark" }) => (
+  <div className="swatch">
+    <div className="chip" style={{ background: value }}>
+      <span style={{ color: ink === "light" ? "rgba(255,255,255,0.85)" : "rgba(0,0,0,0.55)" }}>{value}</span>
+    </div>
+    <div className="meta">
+      <div className="name">{name}</div>
+      <div className="var">{varName}</div>
+    </div>
+  </div>
+);
+
+const TypeRow = ({ name, sample, font, size, weight, lh, ls, css }) => (
+  <div className="type-row">
+    <div>
+      <div className="name">{name}</div>
+      <div className="meta">{size}/{lh} · {weight}</div>
+    </div>
+    <div style={{ fontFamily: font, fontSize: size, fontWeight: weight, lineHeight: lh, letterSpacing: ls, color: "var(--pl-ink-1)" }}>{sample}</div>
+    <div className="css">{css}</div>
+  </div>
+);
+
+const App = () => {
+  const [tab, setTab] = useState("light");
+  const [tog, setTog] = useState(true);
+  const [chk, setChk] = useState(true);
+  const [rad, setRad] = useState("a");
+
+  React.useEffect(() => {
+    document.body.classList.toggle("pl-dark", tab === "dark");
+  }, [tab]);
+
+  return (
+    <div>
+      {/* Hero */}
+      <header style={{ padding: "72px 64px 56px", borderBottom: "1px solid var(--pl-hairline)", background: "linear-gradient(180deg, var(--pl-paper-1), var(--pl-paper-0))" }}>
+        <div className="ds-section-inner">
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
+            <I.Logo size={36} />
+            <div className="pl-serif" style={{ fontSize: 26, color: "var(--pl-ink-1)", letterSpacing: -0.02 }}>Paperline</div>
+            <span className="pl-mono" style={{ marginLeft: 4, padding: "3px 8px", background: "var(--pl-paper-card)", border: "1px solid var(--pl-hairline)", borderRadius: 999, fontSize: 11, color: "var(--pl-ink-3)" }}>v1.0</span>
+            <div style={{ marginLeft: "auto" }}>
+              <PLTabs items={[{ value: "light", label: "Light" }, { value: "dark", label: "Dark" }]} value={tab} onChange={setTab} />
+            </div>
+          </div>
+          <h1 className="pl-serif" style={{ fontSize: 76, lineHeight: 0.98, letterSpacing: -0.035, fontWeight: 400, margin: 0, maxWidth: 980, color: "var(--pl-ink-1)" }}>
+            A warm, editorial design system <em style={{ color: "var(--pl-accent-500)", fontStyle: "italic" }}>for any app</em>.
+          </h1>
+          <p style={{ fontSize: 17, lineHeight: 1.55, color: "var(--pl-ink-2)", maxWidth: 720, marginTop: 22 }}>
+            Paper surfaces, refined plum accent, an editorial serif paired with a humanist sans, a curated 1.6-stroke icon set, layered warm shadows. Built on CSS variables and small, composable React primitives — port to any framework.
+          </p>
+          <div style={{ display: "flex", gap: 10, marginTop: 28, flexWrap: "wrap" }}>
+            {[["Tokens", "60+"], ["Components", "16"], ["Icons", "32+"], ["Themes", "Light · Dark"], ["License", "Yours"]].map(([k, v]) => (
+              <div key={k} style={{ display: "inline-flex", alignItems: "baseline", gap: 8, padding: "8px 12px", background: "var(--pl-paper-card)", border: "1px solid var(--pl-hairline-strong)", borderRadius: 8, boxShadow: "var(--pl-shadow-xs)" }}>
+                <span className="pl-eyebrow" style={{ fontSize: 10 }}>{k}</span>
+                <span className="pl-mono" style={{ fontSize: 11.5, color: "var(--pl-ink-1)", fontWeight: 600 }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      <Section num="01 — Foundations" title="Principles" blurb="Five rules that hold the system together. If you're stuck on a decision, return here.">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          {[
+            ["Paper, not panels", "Surfaces are warm off-white, not cool grey. Use shadow and hairline, not heavy fills."],
+            ["Serif speaks, sans works", "The serif is for moments — page titles, hero copy, empty states. The sans does every UI job."],
+            ["One accent, used sparingly", "Plum activates only the primary path and selection. Everything else stays in ink."],
+            ["Status colors are muted", "Editorial earth tones, never candy. They mark, they don't shout."],
+            ["Numbers belong to mono", "Dates, IDs, counts, percentages — all monospaced and tabular."],
+            ["Icons are one stroke, one set", "Lucide-style 1.6 stroke at 24px. No emoji. Color comes from a category dot, not the icon itself."],
+          ].map(([t, b], i) => (
+            <div key={i} className="demo-cell" style={{ minHeight: 0 }}>
+              <div className="pl-mono" style={{ fontSize: 11, color: "var(--pl-accent-500)", fontWeight: 600 }}>P{i + 1}</div>
+              <div>
+                <div className="pl-serif" style={{ fontSize: 22, color: "var(--pl-ink-1)", letterSpacing: -0.01 }}>{t}</div>
+                <div style={{ fontSize: 13, lineHeight: 1.6, color: "var(--pl-ink-3)", marginTop: 6 }}>{b}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section num="02 — Typography" title="A serif for voice. A sans for work." blurb="Instrument Serif handles display moments. Instrument Sans does the heavy UI lifting. JetBrains Mono surfaces numbers and metadata.">
+        <TypeRow name="Display"    sample="A quieter, warmer system." font="var(--pl-font-serif)" size={56} weight={400} lh={1.05} ls="-0.025em" css=".pl-display" />
+        <TypeRow name="H1"         sample="Section heading"           font="var(--pl-font-serif)" size={36} weight={400} lh={1.1}  ls="-0.02em"  css=".pl-h1" />
+        <TypeRow name="H2"         sample="Subsection"                font="var(--pl-font-sans)"  size={22} weight={600} lh={1.3}  ls="-0.01em"  css=".pl-h2" />
+        <TypeRow name="H3"         sample="Card title"                font="var(--pl-font-sans)"  size={16} weight={600} lh={1.35} ls="-0.005em" css=".pl-h3" />
+        <TypeRow name="Body"       sample="Considered, well-paced reading copy." font="var(--pl-font-sans)" size={13.5} weight={400} lh={1.6} ls="0" css=".pl-body" />
+        <TypeRow name="Small"      sample="Secondary UI text"          font="var(--pl-font-sans)"  size={12} weight={500} lh={1.5}  ls="0"       css=".pl-small" />
+        <TypeRow name="Eyebrow"    sample="OVERVIEW · 03"              font="var(--pl-font-sans)"  size={11} weight={600} lh={1.4}  ls="0.14em"  css=".pl-eyebrow" />
+        <TypeRow name="Mono"       sample="2026·05·03 · v1.0"          font="var(--pl-font-mono)"  size={12} weight={500} lh={1.4}  ls="0"       css=".pl-mono" />
+      </Section>
+
+      <Section num="03 — Color" title="Paper, ink, and a single plum." blurb="Warm surfaces. Plum activates only the primary path. Status colors are muted earth tones — never candy.">
+        <div className="group-h">Paper & Ink</div>
+        <div className="grid-5">
+          <Swatch name="Paper 0"    value="#FBF8F3" varName="--pl-paper-0" />
+          <Swatch name="Paper 1"    value="#F5F1EA" varName="--pl-paper-1" />
+          <Swatch name="Paper 2"    value="#EDE7DC" varName="--pl-paper-2" />
+          <Swatch name="Paper 3"    value="#E4DCCC" varName="--pl-paper-3" />
+          <Swatch name="Card"       value="#FFFEFB" varName="--pl-paper-card" />
+        </div>
+        <div className="grid-5" style={{ marginTop: 16 }}>
+          <Swatch name="Ink 1" value="#1C1A17" varName="--pl-ink-1" ink="light" />
+          <Swatch name="Ink 2" value="#3A352E" varName="--pl-ink-2" ink="light" />
+          <Swatch name="Ink 3" value="#6B6358" varName="--pl-ink-3" ink="light" />
+          <Swatch name="Ink 4" value="#948C7E" varName="--pl-ink-4" />
+          <Swatch name="Ink 5" value="#BDB4A4" varName="--pl-ink-5" />
+        </div>
+
+        <div className="group-h" style={{ marginTop: 36 }}>Plum (accent)</div>
+        <div className="grid-7">
+          <Swatch name="50"  value="#F6F0FA" varName="--pl-accent-50" />
+          <Swatch name="100" value="#EADDF3" varName="--pl-accent-100" />
+          <Swatch name="200" value="#D6BCE6" varName="--pl-accent-200" />
+          <Swatch name="300" value="#B690CE" varName="--pl-accent-300" />
+          <Swatch name="400" value="#8E62AB" varName="--pl-accent-400" ink="light" />
+          <Swatch name="500" value="#6B4A87" varName="--pl-accent-500" ink="light" />
+          <Swatch name="700" value="#402B52" varName="--pl-accent-700" ink="light" />
+        </div>
+
+        <div className="group-h" style={{ marginTop: 36 }}>Status</div>
+        <div className="grid-4">
+          <Swatch name="OK"     value="#4F7A4B" varName="--pl-ok-500"     ink="light" />
+          <Swatch name="Warn"   value="#B07820" varName="--pl-warn-500"   ink="light" />
+          <Swatch name="Danger" value="#A8412A" varName="--pl-danger-500" ink="light" />
+          <Swatch name="Info"   value="#3F627A" varName="--pl-info-500"   ink="light" />
+        </div>
+
+        <div className="group-h" style={{ marginTop: 36 }}>Categorical (charts, tags, board dots)</div>
+        <div className="grid-8">
+          {[["Blue","#3F627A","--pl-cat-blue"],["Amber","#B07820","--pl-cat-amber"],["Green","#4F7A4B","--pl-cat-green"],["Rose","#A8412A","--pl-cat-rose"],["Plum","#6B4A87","--pl-cat-plum"],["Clay","#9A6240","--pl-cat-clay"],["Moss","#5C6B3C","--pl-cat-moss"],["Teal","#3D6E6B","--pl-cat-teal"]].map(([n, v, vn]) => <Swatch key={n} name={n} value={v} varName={vn} ink="light" />)}
+        </div>
+      </Section>
+
+      <Section num="04 — Spacing, Radius & Shadow" title="A 4px rhythm. Soft corners. Warm depth." blurb="Spacing is generous but not loose. Radii stay small — paper rather than candy. Shadows have a warm rgb base, not pure black.">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 }}>
+          <div>
+            <div className="group-h">Scale</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {[["s-1",4],["s-2",8],["s-3",12],["s-4",16],["s-5",20],["s-6",24],["s-7",32],["s-8",40],["s-9",56],["s-10",72]].map(([n, v]) => (
+                <div key={n} style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 12 }}>
+                  <span className="pl-mono" style={{ width: 70, color: "var(--pl-ink-3)" }}>--pl-{n}</span>
+                  <span style={{ width: v, height: 12, background: "var(--pl-accent-300)", borderRadius: 2 }} />
+                  <span className="pl-mono" style={{ color: "var(--pl-ink-2)" }}>{v}px</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="group-h">Radius</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+              {[["sm",6],["md",8],["lg",12],["xl",16],["2xl",20],["pill",999]].map(([n, v]) => (
+                <div key={n} style={{ background: "var(--pl-paper-card)", border: "1px solid var(--pl-hairline-strong)", borderRadius: v, padding: "20px 12px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, boxShadow: "var(--pl-shadow-xs)" }}>
+                  <span className="pl-mono" style={{ fontSize: 11, color: "var(--pl-ink-3)" }}>--pl-r-{n}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "var(--pl-ink-1)" }}>{v === 999 ? "pill" : v + "px"}</span>
+                </div>
+              ))}
+            </div>
+            <div className="group-h" style={{ marginTop: 36 }}>Shadows</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              {["sm","md","lg","xl"].map(s => (
+                <div key={s} style={{ background: "var(--pl-paper-card)", borderRadius: 10, padding: "22px 12px", boxShadow: `var(--pl-shadow-${s})`, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <span className="pl-mono" style={{ fontSize: 11, color: "var(--pl-ink-3)" }}>shadow-{s}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section num="05 — Components" title="Small primitives that compose." blurb="Sixteen components, all built on the tokens above. Pair, stack, swap — the visual language holds.">
+        <div className="grid-2">
+          <div className="demo-cell">
+            <div className="label">Buttons</div>
+            <div className="body">
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <PLButton kind="primary" icon={I.Plus}>Primary</PLButton>
+                <PLButton kind="secondary" icon={I.Filter}>Secondary</PLButton>
+                <PLButton kind="ghost">Ghost</PLButton>
+                <PLButton kind="danger" icon={I.Trash}>Danger</PLButton>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <PLButton size="sm">Small</PLButton>
+                <PLButton size="md">Medium</PLButton>
+                <PLButton size="lg">Large</PLButton>
+              </div>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Form controls</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch" }}>
+              <PLInput icon={I.Search} placeholder="Search anything…" />
+              <div style={{ display: "flex", gap: 18 }}>
+                <PLToggle checked={tog} onChange={() => setTog(!tog)} label="Toggle" />
+                <PLCheckbox checked={chk} onChange={() => setChk(!chk)} label="Check" />
+                <PLRadio checked={rad === "a"} onChange={() => setRad("a")} label="One" />
+                <PLRadio checked={rad === "b"} onChange={() => setRad("b")} label="Two" />
+              </div>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Badges & tags</div>
+            <div className="body">
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                <PLBadge tone="ok" dot>Active</PLBadge>
+                <PLBadge tone="warn" dot>Pending</PLBadge>
+                <PLBadge tone="danger" dot>Failed</PLBadge>
+                <PLBadge tone="info" dot>New</PLBadge>
+                <PLBadge tone="accent">Pro</PLBadge>
+              </div>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                <PLTag>typography</PLTag><PLTag>color</PLTag><PLTag>spacing</PLTag><PLTag>react</PLTag>
+              </div>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Tabs & progress</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch" }}>
+              <PLTabs items={[{value:"a",label:"Overview"},{value:"b",label:"Activity"},{value:"c",label:"Settings"}]} value="a" onChange={()=>{}} />
+              <PLProgress value={62} label="Project completion" />
+            </div>
+          </div>
+
+          <div className="demo-cell" style={{ gridColumn: "span 2" }}>
+            <div className="label">Stats</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, width: "100%" }}>
+              <PLStat label="Active users" value="12,480" delta="+4.2%" tone="accent" />
+              <PLStat label="Revenue"      value="$48.2k" delta="+12%"  tone="ok" />
+              <PLStat label="Errors"       value="0.8%"   delta="-0.3%" tone="danger" />
+              <PLStat label="Latency"      value="124ms"  delta="+6ms"  tone="warn" />
+            </div>
+          </div>
+
+          <div className="demo-cell" style={{ gridColumn: "span 2" }}>
+            <div className="label">Data table</div>
+            <PLTable
+              columns={[
+                { key: "name",   label: "Name",   render: r => <div style={{ display: "flex", alignItems: "center", gap: 10 }}><PLAvatar name={r.name} color={r.color} size={26} /><span style={{ fontWeight: 600, color: "var(--pl-ink-1)" }}>{r.name}</span></div> },
+                { key: "role",   label: "Role" },
+                { key: "status", label: "Status", render: r => <PLBadge tone={r.tone} dot>{r.status}</PLBadge> },
+                { key: "joined", label: "Joined", render: r => <span className="pl-mono" style={{ color: "var(--pl-ink-3)" }}>{r.joined}</span> },
+              ]}
+              rows={[
+                { name: "Maya Tanaka",  role: "Design lead", status: "Active",  tone: "ok",     joined: "Apr 14 · 2026", color: "var(--pl-cat-plum)" },
+                { name: "Jonas Reyes",  role: "Engineer",    status: "Pending", tone: "warn",   joined: "Apr 22 · 2026", color: "var(--pl-cat-blue)" },
+                { name: "Hira Soltani", role: "PM",          status: "Active",  tone: "ok",     joined: "Mar 02 · 2026", color: "var(--pl-cat-rose)" },
+                { name: "Eli Berg",     role: "Researcher",  status: "Off",     tone: "neutral",joined: "Feb 18 · 2026", color: "var(--pl-cat-moss)" },
+              ]}
+            />
+          </div>
+
+          <div className="demo-cell" style={{ gridColumn: "span 2" }}>
+            <div className="label">Alerts</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, width: "100%" }}>
+              <PLAlert tone="info"   title="Heads up">Read the migration guide before upgrading.</PLAlert>
+              <PLAlert tone="ok"     title="Saved">Your changes are committed.</PLAlert>
+              <PLAlert tone="warn"   title="Approaching limit">You've used 82% of your monthly quota.</PLAlert>
+              <PLAlert tone="danger" title="Action failed">We couldn't reach the server. Try again.</PLAlert>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Avatars</div>
+            <div className="body">
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <PLAvatar name="MT" color="var(--pl-cat-plum)" size={24} />
+                <PLAvatar name="JR" color="var(--pl-cat-blue)" size={32} />
+                <PLAvatar name="HS" color="var(--pl-cat-rose)" size={40} />
+                <PLAvatar name="EB" color="var(--pl-cat-moss)" size={48} />
+              </div>
+              <PLAvatarGroup people={[
+                { name: "MT", color: "var(--pl-cat-plum)" },
+                { name: "JR", color: "var(--pl-cat-blue)" },
+                { name: "HS", color: "var(--pl-cat-rose)" },
+                { name: "EB", color: "var(--pl-cat-moss)" },
+                { name: "AL", color: "var(--pl-cat-amber)" },
+              ]} />
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Toasts</div>
+            <div className="body">
+              <PLToast tone="ok" icon={I.Check} title="Project created" action="View" />
+              <PLToast tone="danger" icon={I.Alert} title="Couldn't connect" action="Retry" />
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section num="06 — Iconography" title="One stroke. One set." blurb="Curated 24×24 line icons at 1.6 stroke. Use them with currentColor; pair with a categorical dot for personality.">
+        <div className="grid-8">
+          {["Home","Search","Filter","Plus","Calendar","Tag","Flag","Clock","Alert","Edit","Share","Move","Archive","Trash","Settings","Help","Info","Shield","Download","Upload","Sun","Moon","Check","X","Inbox","Layers","Briefcase","Rocket","Megaphone","Sprout","Book","Sparkles"].map(name => (
+            <div key={name} className="icon-cell">
+              <span style={{ color: "var(--pl-ink-2)" }}>{React.createElement(I[name], { size: 20 })}</span>
+              <span className="nm">{name}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section num="07 — Patterns" title="Combinations worth remembering." blurb="Small, recurring compositions you'll reach for again and again.">
+        <div className="grid-2">
+          <div className="demo-cell">
+            <div className="label">Empty state</div>
+            <div className="body" style={{ alignItems: "center", textAlign: "center", width: "100%" }}>
+              <I.Inbox size={28} style={{ color: "var(--pl-ink-4)" }} />
+              <div className="pl-serif" style={{ fontSize: 22, color: "var(--pl-ink-1)" }}>Nothing here yet.</div>
+              <div style={{ fontSize: 13, color: "var(--pl-ink-3)" }}>Add your first item to get started.</div>
+              <PLButton kind="primary" icon={I.Plus}>New item</PLButton>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Section header</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch" }}>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+                <div>
+                  <div className="pl-eyebrow">Workspace</div>
+                  <div className="pl-serif" style={{ fontSize: 28, color: "var(--pl-ink-1)", letterSpacing: -0.02 }}>
+                    Members<span style={{ color: "var(--pl-accent-500)" }}>.</span>
+                  </div>
+                </div>
+                <PLButton kind="secondary" icon={I.Plus}>Invite</PLButton>
+              </div>
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Item row</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch" }}>
+              {[["Brand refresh", "Maya · 4 days", "ok", "Active"], ["Q3 roadmap", "Jonas · 2 days", "warn", "Pending"]].map(([t, m, tone, s]) => (
+                <div key={t} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", background: "var(--pl-paper-card)", border: "1px solid var(--pl-hairline)", borderRadius: 8 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: 999, background: `var(--pl-${tone === "ok" ? "ok" : "warn"}-500)` }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--pl-ink-1)" }}>{t}</div>
+                    <div className="pl-mono" style={{ fontSize: 11, color: "var(--pl-ink-4)", marginTop: 1 }}>{m}</div>
+                  </div>
+                  <PLBadge tone={tone}>{s}</PLBadge>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="demo-cell">
+            <div className="label">Settings row</div>
+            <div className="body" style={{ width: "100%", alignItems: "stretch" }}>
+              {[["Notifications", "Email me when something changes", true], ["Public profile", "Visible to anyone with the link", false]].map(([t, d, on]) => (
+                <div key={t} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid var(--pl-hairline)" }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--pl-ink-1)" }}>{t}</div>
+                    <div style={{ fontSize: 12, color: "var(--pl-ink-3)", marginTop: 2 }}>{d}</div>
+                  </div>
+                  <PLToggle checked={on} onChange={() => {}} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section num="08 — Voice" title="Direct, lowercase, never cute." blurb="Copy stays short and confident. Buttons are verbs. Empty states acknowledge absence rather than perform.">
+        <div className="grid-2">
+          {[["Don't", "🚀 Let's get started — woohoo!", "danger"], ["Do", "No projects yet. Create one to begin.", "ok"], ["Don't", "Successfully saved your changes ✨", "danger"], ["Do", "Saved.", "ok"]].map(([k, v, tone], i) => (
+            <div key={i} style={{ background: "var(--pl-paper-card)", border: "1px solid var(--pl-hairline-strong)", borderRadius: 10, padding: 18, borderLeft: `3px solid var(--pl-${tone}-500)` }}>
+              <div className="pl-eyebrow" style={{ color: `var(--pl-${tone}-700)` }}>{k}</div>
+              <div className="pl-serif" style={{ fontSize: 22, color: "var(--pl-ink-1)", marginTop: 6, lineHeight: 1.3 }}>{v}</div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section num="09 — Usage" title="How to drop this into your app." blurb="Three files. Six minutes. Works in any framework that can render React or read CSS variables.">
+        <div className="demo-cell">
+          <div className="label">1 · Load fonts (Google Fonts)</div>
+          <pre className="pl-mono" style={{ background: "var(--pl-paper-1)", border: "1px solid var(--pl-hairline)", borderRadius: 8, padding: 14, fontSize: 11.5, color: "var(--pl-ink-2)", overflow: "auto", margin: 0 }}>{`<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />`}</pre>
+        </div>
+        <div className="demo-cell" style={{ marginTop: 16 }}>
+          <div className="label">2 · Link the tokens</div>
+          <pre className="pl-mono" style={{ background: "var(--pl-paper-1)", border: "1px solid var(--pl-hairline)", borderRadius: 8, padding: 14, fontSize: 11.5, color: "var(--pl-ink-2)", overflow: "auto", margin: 0 }}>{`<link rel="stylesheet" href="dist/paperline.css" />\n<body class="pl-root">…</body>`}</pre>
+        </div>
+        <div className="demo-cell" style={{ marginTop: 16 }}>
+          <div className="label">3 · Use components or consume tokens</div>
+          <pre className="pl-mono" style={{ background: "var(--pl-paper-1)", border: "1px solid var(--pl-hairline)", borderRadius: 8, padding: 14, fontSize: 11.5, color: "var(--pl-ink-2)", overflow: "auto", margin: 0 }}>{`<button style={{
+  background: "var(--pl-accent-500)",
+  color: "var(--pl-accent-ink)",
+  padding: "8px 14px",
+  borderRadius: "var(--pl-r-md)",
+  boxShadow: "var(--pl-shadow-sm)",
+  fontFamily: "var(--pl-font-sans)",
+}}>Primary</button>`}</pre>
+        </div>
+        <div className="demo-cell" style={{ marginTop: 16 }}>
+          <div className="label">Toggle dark mode</div>
+          <pre className="pl-mono" style={{ background: "var(--pl-paper-1)", border: "1px solid var(--pl-hairline)", borderRadius: 8, padding: 14, fontSize: 11.5, color: "var(--pl-ink-2)", overflow: "auto", margin: 0 }}>{`<html data-theme="dark"> … </html>\n// or add the class to any wrapping element:\n<div class="pl-dark"> … </div>`}</pre>
+        </div>
+      </Section>
+
+      <footer style={{ padding: "32px 64px", textAlign: "center", fontSize: 12, color: "var(--pl-ink-4)" }}>
+        <span className="pl-mono">Paperline · v1.0 · Yours to use, fork, extend.</span>
+      </footer>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

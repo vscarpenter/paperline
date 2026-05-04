@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs and diagnostics
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build/test output
+coverage/
+.cache/
+.vite/
+.turbo/
+dist/*.map
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Package artifacts
+*.tgz
