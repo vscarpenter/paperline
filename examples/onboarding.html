@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paperline — Onboarding Example</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../dist/paperline.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+  body {
+    background: var(--pl-paper-0);
+    font-family: var(--pl-font-sans);
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 32px 16px;
+    box-sizing: border-box;
+  }
+
+  /* Outer frame */
+  .frame {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Step indicator */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+  .step-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--pl-paper-2);
+    transition: background var(--pl-dur-2), width var(--pl-dur-2);
+  }
+  .step-dot.active {
+    background: var(--pl-accent-500);
+    width: 22px;
+  }
+  .step-dot.done { background: var(--pl-accent-300); }
+
+  /* Card */
+  .card {
+    width: 100%;
+    background: var(--pl-paper-card);
+    border: 1px solid var(--pl-hairline-strong);
+    border-radius: 16px;
+    box-shadow: var(--pl-shadow-lg);
+    overflow: hidden;
+  }
+  .card-top {
+    padding: 32px 32px 24px;
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  .card-body { padding: 24px 32px; }
+  .card-footer {
+    padding: 16px 32px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .step-label {
+    font-family: var(--pl-font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pl-accent-500);
+    margin-bottom: 8px;
+  }
+  .step-title {
+    font-family: var(--pl-font-serif);
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--pl-ink-1);
+    margin: 0 0 6px;
+    line-height: 1.1;
+  }
+  .step-title em { font-style: italic; color: var(--pl-accent-500); }
+  .step-blurb {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--pl-ink-3);
+    margin: 0;
+  }
+
+  /* Plan cards */
+  .plan-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .plan-card {
+    border: 2px solid var(--pl-hairline-strong);
+    border-radius: 10px;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: border-color var(--pl-dur-1), background var(--pl-dur-1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .plan-card:hover { border-color: var(--pl-accent-300); background: var(--pl-accent-50); }
+  .plan-card.selected { border-color: var(--pl-accent-500); background: var(--pl-accent-50); }
+  .plan-name { font-size: 13px; font-weight: 600; color: var(--pl-ink-1); }
+  .plan-price { font-family: var(--pl-font-mono); font-size: 20px; font-weight: 700; color: var(--pl-ink-1); }
+  .plan-price span { font-size: 11px; color: var(--pl-ink-4); font-weight: 400; }
+  .plan-feature { font-size: 11.5px; color: var(--pl-ink-3); display: flex; align-items: center; gap: 5px; }
+
+  /* Role picker */
+  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .role-card {
+    border: 2px solid var(--pl-hairline-strong);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: border-color var(--pl-dur-1), background var(--pl-dur-1);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .role-card:hover { border-color: var(--pl-accent-300); background: var(--pl-accent-50); }
+  .role-card.selected { border-color: var(--pl-accent-500); background: var(--pl-accent-50); }
+  .role-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--pl-paper-1);
+    border: 1px solid var(--pl-hairline);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--pl-accent-500);
+  }
+  .role-name { font-size: 13px; font-weight: 600; color: var(--pl-ink-1); }
+  .role-desc { font-size: 11.5px; color: var(--pl-ink-4); margin-top: 2px; line-height: 1.4; }
+
+  /* Success */
+  .success-ring {
+    width: 64px;
+    height: 64px;
+    border-radius: 999px;
+    background: var(--pl-accent-50);
+    border: 2px solid var(--pl-accent-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pl-accent-500);
+    margin: 0 auto 20px;
+  }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body class="pl-root">
+<div id="root"></div>
+
+<script type="text/babel" src="../dist/paperline-icons.global.jsx"></script>
+<script type="text/babel" src="../dist/paperline-components.global.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+const TOTAL_STEPS = 4;
+
+/* ── Step indicator ── */
+const StepDots = ({ current }) => (
+  <div className="steps">
+    {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+      <div
+        key={i}
+        className={`step-dot${i === current ? " active" : ""}${i < current ? " done" : ""}`}
+      />
+    ))}
+  </div>
+);
+
+/* ── Step 0: account ── */
+const StepAccount = ({ onNext }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const valid = name.trim() && email.includes("@") && pass.length >= 8;
+
+  return (
+    <>
+      <div className="card-top">
+        <div className="step-label">Step 1 of {TOTAL_STEPS}</div>
+        <h2 className="step-title">Create your <em>account.</em></h2>
+        <p className="step-blurb">Start with your name and a secure password. No credit card required.</p>
+      </div>
+      <div className="card-body">
+        <PLStack gap={14}>
+          <PLField label="Full name" required>
+            <PLInput value={name} onChange={e => setName(e.target.value)} placeholder="Maya Tanaka" icon={I.Briefcase} />
+          </PLField>
+          <PLField label="Work email" required>
+            <PLInput type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="maya@company.com" icon={I.Inbox} />
+          </PLField>
+          <PLField label="Password" helper="At least 8 characters." required>
+            <PLInput type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••" icon={I.Shield} />
+          </PLField>
+        </PLStack>
+      </div>
+      <div className="card-footer">
+        <div style={{ fontSize: 12, color: "var(--pl-ink-4)" }}>
+          Already have an account? <a href="#" style={{ color: "var(--pl-accent-500)", textDecoration: "none", fontWeight: 600 }}>Sign in</a>
+        </div>
+        <PLButton kind="primary" iconRight={I.ChevRight} disabled={!valid} onClick={onNext}>
+          Continue
+        </PLButton>
+      </div>
+    </>
+  );
+};
+
+/* ── Step 1: role ── */
+const StepRole = ({ onBack, onNext }) => {
+  const [role, setRole] = useState(null);
+  const roles = [
+    { id: "designer",  icon: I.Sparkles, name: "Designer",        desc: "Crafting UI, tokens, and visual systems." },
+    { id: "engineer",  icon: I.Rocket,   name: "Engineer",         desc: "Building products and shipping code." },
+    { id: "pm",        icon: I.Flag,     name: "Product manager",  desc: "Roadmaps, priorities, and team alignment." },
+    { id: "other",     icon: I.Briefcase,name: "Something else",   desc: "Marketing, ops, leadership, or other." },
+  ];
+
+  return (
+    <>
+      <div className="card-top">
+        <div className="step-label">Step 2 of {TOTAL_STEPS}</div>
+        <h2 className="step-title">What's your <em>role?</em></h2>
+        <p className="step-blurb">We'll tailor your onboarding and suggest relevant examples.</p>
+      </div>
+      <div className="card-body">
+        <div className="role-grid">
+          {roles.map(r => (
+            <div
+              key={r.id}
+              className={`role-card${role === r.id ? " selected" : ""}`}
+              onClick={() => setRole(r.id)}
+            >
+              <div className="role-icon"><r.icon size={16} /></div>
+              <div>
+                <div className="role-name">{r.name}</div>
+                <div className="role-desc">{r.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="card-footer">
+        <PLButton kind="ghost" icon={I.ChevLeft} onClick={onBack}>Back</PLButton>
+        <PLButton kind="primary" iconRight={I.ChevRight} disabled={!role} onClick={onNext}>
+          Continue
+        </PLButton>
+      </div>
+    </>
+  );
+};
+
+/* ── Step 2: plan ── */
+const StepPlan = ({ onBack, onNext }) => {
+  const [plan, setPlan] = useState("pro");
+  const plans = [
+    {
+      id: "free",
+      name: "Free",
+      price: "$0",
+      per: "",
+      features: ["1 workspace", "3 projects", "Basic tokens"],
+    },
+    {
+      id: "pro",
+      name: "Pro",
+      price: "$12",
+      per: "/mo",
+      features: ["Unlimited projects", "Dark mode", "Priority support"],
+      badge: "Most popular",
+    },
+    {
+      id: "team",
+      name: "Team",
+      price: "$38",
+      per: "/mo",
+      features: ["5 seats included", "SSO & audit log", "Custom domain"],
+    },
+  ];
+
+  return (
+    <>
+      <div className="card-top">
+        <div className="step-label">Step 3 of {TOTAL_STEPS}</div>
+        <h2 className="step-title">Pick your <em>plan.</em></h2>
+        <p className="step-blurb">All plans include a 14-day trial. No credit card needed today.</p>
+      </div>
+      <div className="card-body">
+        <div className="plan-grid">
+          {plans.map(p => (
+            <div
+              key={p.id}
+              className={`plan-card${plan === p.id ? " selected" : ""}`}
+              onClick={() => setPlan(p.id)}
+            >
+              <div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
+                  <div className="plan-name">{p.name}</div>
+                  {p.badge && <PLBadge tone="accent">{p.badge}</PLBadge>}
+                </div>
+                <div className="plan-price">{p.price}<span>{p.per}</span></div>
+              </div>
+              <PLDivider />
+              <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                {p.features.map(f => (
+                  <div key={f} className="plan-feature">
+                    <I.Check size={11} style={{ color: "var(--pl-ok-500)", flexShrink: 0 }} />
+                    {f}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="card-footer">
+        <PLButton kind="ghost" icon={I.ChevLeft} onClick={onBack}>Back</PLButton>
+        <PLButton kind="primary" iconRight={I.ChevRight} onClick={onNext}>
+          Start trial
+        </PLButton>
+      </div>
+    </>
+  );
+};
+
+/* ── Step 3: done ── */
+const StepDone = ({ onRestart }) => (
+  <>
+    <div className="card-top" style={{ textAlign: "center", paddingBottom: 28, paddingTop: 36 }}>
+      <div className="success-ring">
+        <I.Check size={28} />
+      </div>
+      <div className="step-label" style={{ textAlign: "center" }}>You're all set</div>
+      <h2 className="step-title" style={{ textAlign: "center" }}>Welcome to <em>Paperline.</em></h2>
+      <p className="step-blurb" style={{ textAlign: "center", maxWidth: 340, margin: "0 auto" }}>
+        Your workspace is ready. Start a new project or explore the component library.
+      </p>
+    </div>
+    <div className="card-body">
+      <PLStack gap={10}>
+        <PLAlert tone="ok" title="Trial activated">Your 14-day Pro trial starts now. No payment needed yet.</PLAlert>
+        <PLStack gap={8}>
+          {[
+            ["New project",         I.Plus,    "primary"],
+            ["Browse the spec",     I.Book,    "secondary"],
+            ["Invite a teammate",   I.Megaphone,"secondary"],
+          ].map(([label, Icon, kind]) => (
+            <PLButton key={label} kind={kind} icon={Icon} fullWidth>{label}</PLButton>
+          ))}
+        </PLStack>
+      </PLStack>
+    </div>
+    <div className="card-footer" style={{ justifyContent: "center" }}>
+      <PLButton kind="ghost" size="sm" onClick={onRestart}>
+        Restart demo
+      </PLButton>
+    </div>
+  </>
+);
+
+/* ── Main App ── */
+const App = () => {
+  const [step, setStep] = useState(0);
+
+  const next = () => setStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
+  const back = () => setStep(s => Math.max(s - 1, 0));
+
+  const stepContent = [
+    <StepAccount onNext={next} />,
+    <StepRole    onBack={back} onNext={next} />,
+    <StepPlan    onBack={back} onNext={next} />,
+    <StepDone    onRestart={() => setStep(0)} />,
+  ];
+
+  return (
+    <div className="frame">
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
+        <I.Logo size={22} />
+        <span style={{ fontFamily: "var(--pl-font-serif)", fontSize: 16, color: "var(--pl-ink-1)", letterSpacing: -0.01 }}>Paperline</span>
+      </div>
+      <StepDots current={step} />
+      <div className="card">
+        {stepContent[step]}
+      </div>
+      <div style={{ marginTop: 20, fontSize: 12, color: "var(--pl-ink-5)", textAlign: "center" }}>
+        By continuing you agree to the{" "}
+        <a href="#" style={{ color: "var(--pl-ink-3)", textDecoration: "none" }}>Terms of Service</a>
+        {" "}and{" "}
+        <a href="#" style={{ color: "var(--pl-ink-3)", textDecoration: "none" }}>Privacy Policy</a>.
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

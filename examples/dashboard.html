@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paperline — Dashboard Example</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../dist/paperline.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    background: var(--pl-paper-0);
+    font-family: var(--pl-font-sans);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--pl-paper-card);
+    border-right: 1px solid var(--pl-hairline);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px 20px;
+    border-bottom: 1px solid var(--pl-hairline);
+    margin-bottom: 8px;
+  }
+  .sidebar-brand .name {
+    font-family: var(--pl-font-serif);
+    font-size: 18px;
+    color: var(--pl-ink-1);
+    letter-spacing: -0.01em;
+  }
+  .nav-group { padding: 8px 10px 0; }
+  .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pl-ink-4);
+    padding: 0 8px;
+    margin-bottom: 4px;
+    font-family: var(--pl-font-sans);
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--pl-ink-3);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background var(--pl-dur-1), color var(--pl-dur-1);
+    margin-bottom: 1px;
+  }
+  .nav-item:hover { background: var(--pl-paper-1); color: var(--pl-ink-1); }
+  .nav-item.active { background: var(--pl-accent-50); color: var(--pl-accent-700); font-weight: 600; }
+  .nav-item.active svg { color: var(--pl-accent-500); }
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 10px 0;
+    border-top: 1px solid var(--pl-hairline);
+  }
+
+  /* Main */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 28px;
+    border-bottom: 1px solid var(--pl-hairline);
+    background: var(--pl-paper-card);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar .breadcrumb {
+    font-size: 13px;
+    color: var(--pl-ink-3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .topbar .breadcrumb .sep { color: var(--pl-ink-5); }
+  .topbar .breadcrumb .current { color: var(--pl-ink-1); font-weight: 600; }
+  .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+  .content { padding: 28px; display: flex; flex-direction: column; gap: 24px; max-width: 1100px; }
+
+  /* Page header */
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; }
+  .page-header .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-ink-4); margin-bottom: 4px; font-family: var(--pl-font-sans); }
+  .page-header h1 { font-family: var(--pl-font-serif); font-size: 34px; font-weight: 400; letter-spacing: -0.02em; color: var(--pl-ink-1); margin: 0; line-height: 1; }
+  .page-header h1 em { font-style: italic; color: var(--pl-accent-500); }
+
+  /* Stats row */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  /* Two-col layout */
+  .two-col { display: grid; grid-template-columns: 1fr 340px; gap: 18px; align-items: start; }
+
+  /* Card */
+  .card {
+    background: var(--pl-paper-card);
+    border: 1px solid var(--pl-hairline-strong);
+    border-radius: 12px;
+    box-shadow: var(--pl-shadow-xs);
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--pl-ink-1); }
+  .card-body { padding: 16px 20px; }
+  .card-body-flush { /* no padding — for tables */ }
+
+  /* Activity feed */
+  .feed-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  .feed-item:last-child { border-bottom: none; }
+  .feed-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .feed-body { flex: 1; }
+  .feed-text { font-size: 13px; color: var(--pl-ink-2); line-height: 1.45; }
+  .feed-text strong { color: var(--pl-ink-1); font-weight: 600; }
+  .feed-time { font-family: var(--pl-font-mono); font-size: 10.5px; color: var(--pl-ink-4); margin-top: 2px; }
+
+  /* Mini chart (pure CSS bars) */
+  .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; padding: 0 0 4px; }
+  .bar-chart .bar {
+    flex: 1;
+    background: var(--pl-accent-100);
+    border-radius: 3px 3px 0 0;
+    transition: background var(--pl-dur-1);
+    position: relative;
+  }
+  .bar-chart .bar.highlight { background: var(--pl-accent-400); }
+  .bar-chart-labels { display: flex; gap: 6px; margin-top: 6px; }
+  .bar-chart-labels span {
+    flex: 1;
+    text-align: center;
+    font-family: var(--pl-font-mono);
+    font-size: 9.5px;
+    color: var(--pl-ink-4);
+  }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body class="pl-root">
+<div id="root"></div>
+
+<script type="text/babel" src="../dist/paperline-icons.global.jsx"></script>
+<script type="text/babel" src="../dist/paperline-components.global.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+/* ─── Nav item ─── */
+const NavItem = ({ icon: Icon, label, active, badge }) => (
+  <a className={`nav-item${active ? " active" : ""}`} href="#">
+    <Icon size={15} />
+    <span style={{ flex: 1 }}>{label}</span>
+    {badge && (
+      <span style={{
+        fontSize: 10, fontWeight: 700, fontFamily: "var(--pl-font-mono)",
+        background: "var(--pl-accent-100)", color: "var(--pl-accent-700)",
+        borderRadius: 999, padding: "1px 6px",
+      }}>{badge}</span>
+    )}
+  </a>
+);
+
+/* ─── Sparkline bar chart ─── */
+const BarChart = ({ data, highlights = [] }) => (
+  <div>
+    <div className="bar-chart">
+      {data.map((v, i) => (
+        <div key={i} className={`bar${highlights.includes(i) ? " highlight" : ""}`} style={{ height: `${v}%` }} />
+      ))}
+    </div>
+    <div className="bar-chart-labels">
+      {["W1","W2","W3","W4","W5","W6","W7","W8"].map(l => <span key={l}>{l}</span>)}
+    </div>
+  </div>
+);
+
+/* ─── Activity feed item ─── */
+const FeedItem = ({ dotColor, children, time }) => (
+  <div className="feed-item">
+    <div className="feed-dot" style={{ background: dotColor }} />
+    <div className="feed-body">
+      <div className="feed-text">{children}</div>
+      <div className="feed-time">{time}</div>
+    </div>
+  </div>
+);
+
+const App = () => {
+  const [search, setSearch] = useState("");
+  const [theme, setTheme] = useState("light");
+
+  React.useEffect(() => {
+    document.body.classList.toggle("pl-dark", theme === "dark");
+  }, [theme]);
+
+  const projects = [
+    { name: "Brand refresh",    owner: "Maya T.",  status: "Active",   tone: "ok",     progress: 68, due: "May 14 · 2026", color: "var(--pl-cat-plum)" },
+    { name: "Q3 roadmap",       owner: "Jonas R.", status: "In review",tone: "info",   progress: 45, due: "May 20 · 2026", color: "var(--pl-cat-blue)" },
+    { name: "Design tokens v2", owner: "Hira S.",  status: "Pending",  tone: "warn",   progress: 12, due: "Jun 01 · 2026", color: "var(--pl-cat-rose)" },
+    { name: "API integration",  owner: "Eli B.",   status: "Blocked",  tone: "danger", progress: 30, due: "May 28 · 2026", color: "var(--pl-cat-moss)" },
+  ];
+
+  const filtered = projects.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.owner.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+
+      {/* ── Sidebar ── */}
+      <nav className="sidebar">
+        <div className="sidebar-brand">
+          <I.Logo size={26} />
+          <span className="name">Paperline</span>
+        </div>
+
+        <div className="nav-group">
+          <NavItem icon={I.Home}      label="Overview"  active />
+          <NavItem icon={I.Briefcase} label="Projects"  badge="4" />
+          <NavItem icon={I.Calendar}  label="Timeline" />
+          <NavItem icon={I.Layers}    label="Assets" />
+        </div>
+
+        <div className="nav-group" style={{ marginTop: 16 }}>
+          <div className="nav-label">Team</div>
+          <NavItem icon={I.Flag}     label="Goals" />
+          <NavItem icon={I.Megaphone}label="Updates" />
+          <NavItem icon={I.Inbox}    label="Inbox" badge="3" />
+        </div>
+
+        <div className="sidebar-footer">
+          <NavItem icon={I.Settings} label="Settings" />
+          <NavItem icon={I.Help}     label="Help" />
+          <div style={{ padding: "12px 10px 0", display: "flex", alignItems: "center", gap: 10 }}>
+            <PLAvatar name="VC" color="var(--pl-cat-plum)" size={28} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--pl-ink-1)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Vinny Carpenter</div>
+              <div style={{ fontSize: 11, color: "var(--pl-ink-4)" }}>Admin</div>
+            </div>
+            <I.More size={14} style={{ color: "var(--pl-ink-4)", flexShrink: 0 }} />
+          </div>
+        </div>
+      </nav>
+
+      {/* ── Main ── */}
+      <div className="main">
+
+        {/* Topbar */}
+        <header className="topbar">
+          <div className="breadcrumb">
+            <span>Workspace</span>
+            <span className="sep">/</span>
+            <span className="current">Overview</span>
+          </div>
+          <div className="topbar-actions">
+            <PLButton kind="ghost" aria-label="Toggle dark mode" onClick={() => setTheme(t => t === "light" ? "dark" : "light")}>
+              {theme === "light" ? <I.Moon size={14} /> : <I.Sun size={14} />}
+            </PLButton>
+            <PLButton kind="secondary" icon={I.Download} size="sm">Export</PLButton>
+            <PLButton kind="primary"   icon={I.Plus}     size="sm">New project</PLButton>
+          </div>
+        </header>
+
+        {/* Page content */}
+        <div className="content">
+
+          {/* Page header */}
+          <div className="page-header">
+            <div>
+              <div className="eyebrow">Workspace · May 2026</div>
+              <h1>Good morning<em>.</em></h1>
+            </div>
+            <PLBreadcrumbs items={[
+              { label: "Paperline", href: "#" },
+              { label: "Design team", href: "#" },
+              { label: "Overview" },
+            ]} />
+          </div>
+
+          {/* Stats */}
+          <div className="stats-row">
+            <PLStat label="Active projects" value="4"      delta="+1 this month"  tone="accent" />
+            <PLStat label="Tasks open"      value="38"     delta="-5 vs last week" tone="ok"     />
+            <PLStat label="Blocked"         value="2"      delta="+2"             tone="danger"  />
+            <PLStat label="Team velocity"   value="84%"    delta="+6%"            tone="ok"     />
+          </div>
+
+          {/* Two column */}
+          <div className="two-col">
+
+            {/* Projects table */}
+            <div>
+              <div className="card">
+                <div className="card-header">
+                  <span className="card-title">Projects</span>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <PLInput
+                      icon={I.Search}
+                      placeholder="Filter…"
+                      value={search}
+                      onChange={e => setSearch(e.target.value)}
+                    />
+                    <PLButton kind="secondary" icon={I.Filter} size="sm" aria-label="Filter" />
+                  </div>
+                </div>
+                <div className="card-body-flush">
+                  <PLTable
+                    columns={[
+                      {
+                        key: "name",
+                        label: "Project",
+                        render: r => (
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <PLAvatar name={r.name.slice(0, 2).toUpperCase()} color={r.color} size={26} />
+                            <div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--pl-ink-1)" }}>{r.name}</div>
+                              <div style={{ fontSize: 11, color: "var(--pl-ink-4)", fontFamily: "var(--pl-font-mono)" }}>{r.owner}</div>
+                            </div>
+                          </div>
+                        ),
+                      },
+                      {
+                        key: "status",
+                        label: "Status",
+                        render: r => <PLBadge tone={r.tone} dot>{r.status}</PLBadge>,
+                      },
+                      {
+                        key: "progress",
+                        label: "Progress",
+                        render: r => (
+                          <div style={{ width: 120 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                              <span style={{ fontSize: 11, color: "var(--pl-ink-3)" }}></span>
+                              <span style={{ fontSize: 11, fontFamily: "var(--pl-font-mono)", color: "var(--pl-ink-3)" }}>{r.progress}%</span>
+                            </div>
+                            <PLProgress value={r.progress} />
+                          </div>
+                        ),
+                      },
+                      {
+                        key: "due",
+                        label: "Due",
+                        render: r => <span style={{ fontFamily: "var(--pl-font-mono)", fontSize: 11.5, color: "var(--pl-ink-3)" }}>{r.due}</span>,
+                      },
+                    ]}
+                    rows={filtered}
+                  />
+                  {filtered.length === 0 && (
+                    <PLEmptyState
+                      icon={I.Search}
+                      title="No matches"
+                      description={`No projects found for "${search}".`}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right column */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+
+              {/* Velocity sparkline */}
+              <div className="card">
+                <div className="card-header">
+                  <span className="card-title">Weekly velocity</span>
+                  <PLBadge tone="ok" dot>On track</PLBadge>
+                </div>
+                <div className="card-body">
+                  <BarChart data={[42, 58, 53, 70, 66, 80, 75, 84]} highlights={[7]} />
+                  <PLDivider style={{ margin: "14px 0 10px" }} />
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: 18, fontWeight: 700, fontFamily: "var(--pl-font-mono)", color: "var(--pl-ink-1)" }}>84%</div>
+                      <div style={{ fontSize: 10.5, color: "var(--pl-ink-4)" }}>This week</div>
+                    </div>
+                    <div style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: 18, fontWeight: 700, fontFamily: "var(--pl-font-mono)", color: "var(--pl-ink-1)" }}>66%</div>
+                      <div style={{ fontSize: 10.5, color: "var(--pl-ink-4)" }}>Last week</div>
+                    </div>
+                    <div style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: 18, fontWeight: 700, fontFamily: "var(--pl-font-mono)", color: "var(--pl-ok-500)" }}>+27%</div>
+                      <div style={{ fontSize: 10.5, color: "var(--pl-ink-4)" }}>8-wk trend</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Team */}
+              <div className="card">
+                <div className="card-header">
+                  <span className="card-title">Team</span>
+                  <PLButton kind="ghost" icon={I.Plus} size="sm" aria-label="Invite">Invite</PLButton>
+                </div>
+                <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {[
+                    { name: "Maya Tanaka",  role: "Design lead", color: "var(--pl-cat-plum)", initials: "MT", status: "ok"   },
+                    { name: "Jonas Reyes",  role: "Engineer",    color: "var(--pl-cat-blue)", initials: "JR", status: "ok"   },
+                    { name: "Hira Soltani", role: "PM",          color: "var(--pl-cat-rose)", initials: "HS", status: "warn" },
+                    { name: "Eli Berg",     role: "Researcher",  color: "var(--pl-cat-moss)", initials: "EB", status: "ok"   },
+                  ].map(m => (
+                    <div key={m.name} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <PLAvatar name={m.initials} color={m.color} size={30} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--pl-ink-1)" }}>{m.name}</div>
+                        <div style={{ fontSize: 11, color: "var(--pl-ink-4)" }}>{m.role}</div>
+                      </div>
+                      <PLBadge tone={m.status} dot>{m.status === "ok" ? "Active" : "Away"}</PLBadge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Activity */}
+              <div className="card">
+                <div className="card-header">
+                  <span className="card-title">Recent activity</span>
+                </div>
+                <div>
+                  <FeedItem dotColor="var(--pl-ok-500)" time="Today · 9:42 am">
+                    <strong>Maya</strong> shipped the new button variants to staging.
+                  </FeedItem>
+                  <FeedItem dotColor="var(--pl-info-500)" time="Today · 8:15 am">
+                    <strong>Eli</strong> opened a comment on <em>Design tokens v2</em>.
+                  </FeedItem>
+                  <FeedItem dotColor="var(--pl-warn-500)" time="Yesterday · 5:30 pm">
+                    <strong>Jonas</strong> marked <em>API integration</em> as blocked.
+                  </FeedItem>
+                  <FeedItem dotColor="var(--pl-accent-400)" time="Yesterday · 2:00 pm">
+                    <strong>Hira</strong> created the Q3 roadmap project.
+                  </FeedItem>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

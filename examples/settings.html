@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paperline — Settings Example</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../dist/paperline.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+  body { background: var(--pl-paper-0); font-family: var(--pl-font-sans); }
+
+  .shell { display: flex; min-height: 100vh; }
+
+  /* Sidebar nav */
+  .settings-nav {
+    width: 200px;
+    flex-shrink: 0;
+    padding: 32px 16px;
+    border-right: 1px solid var(--pl-hairline);
+    background: var(--pl-paper-card);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .settings-nav .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  .settings-nav .brand span {
+    font-family: var(--pl-font-serif);
+    font-size: 17px;
+    color: var(--pl-ink-1);
+  }
+  .settings-nav .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pl-ink-4);
+    padding: 12px 8px 4px;
+    font-family: var(--pl-font-sans);
+  }
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 9px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--pl-ink-3);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background var(--pl-dur-1), color var(--pl-dur-1);
+  }
+  .nav-link:hover { background: var(--pl-paper-1); color: var(--pl-ink-1); }
+  .nav-link.active { background: var(--pl-accent-50); color: var(--pl-accent-700); font-weight: 600; }
+
+  /* Main */
+  .settings-main { flex: 1; padding: 40px 48px; max-width: 680px; }
+
+  .page-title {
+    font-family: var(--pl-font-serif);
+    font-size: 30px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--pl-ink-1);
+    margin: 0 0 4px;
+  }
+  .page-subtitle { font-size: 13px; color: var(--pl-ink-3); margin: 0 0 28px; line-height: 1.5; }
+
+  /* Settings section */
+  .settings-section {
+    background: var(--pl-paper-card);
+    border: 1px solid var(--pl-hairline-strong);
+    border-radius: 12px;
+    box-shadow: var(--pl-shadow-xs);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .settings-section-header {
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid var(--pl-hairline);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .settings-section-title { font-size: 13px; font-weight: 600; color: var(--pl-ink-1); }
+  .settings-section-blurb { font-size: 12px; color: var(--pl-ink-4); margin-top: 1px; }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row-info { flex: 1; }
+  .settings-row-label { font-size: 13px; font-weight: 500; color: var(--pl-ink-1); }
+  .settings-row-desc  { font-size: 12px; color: var(--pl-ink-4); margin-top: 2px; line-height: 1.45; }
+
+  .danger-zone {
+    background: var(--pl-paper-card);
+    border: 1px solid var(--pl-danger-500);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    opacity: 0.85;
+  }
+  .danger-zone .settings-section-header { border-color: color-mix(in srgb, var(--pl-danger-500) 20%, transparent); }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body class="pl-root">
+<div id="root"></div>
+
+<script type="text/babel" src="../dist/paperline-icons.global.jsx"></script>
+<script type="text/babel" src="../dist/paperline-components.global.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+const NavLink = ({ icon: Icon, label, active }) => (
+  <a className={`nav-link${active ? " active" : ""}`} href="#">
+    <Icon size={14} />
+    {label}
+  </a>
+);
+
+const ToggleRow = ({ label, desc, defaultOn = false }) => {
+  const [on, setOn] = useState(defaultOn);
+  return (
+    <div className="settings-row">
+      <div className="settings-row-info">
+        <div className="settings-row-label">{label}</div>
+        {desc && <div className="settings-row-desc">{desc}</div>}
+      </div>
+      <PLToggle checked={on} onChange={() => setOn(v => !v)} />
+    </div>
+  );
+};
+
+const App = () => {
+  const [displayName, setDisplayName] = useState("Vinny Carpenter");
+  const [email, setEmail] = useState("vinny@paperline.design");
+  const [handle, setHandle] = useState("vinnycarpenter");
+  const [bio, setBio] = useState("Designer building Paperline, a warm editorial design system.");
+  const [theme, setTheme] = useState("light");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  React.useEffect(() => {
+    document.body.classList.toggle("pl-dark", theme === "dark");
+  }, [theme]);
+
+  const handleSave = () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2400);
+  };
+
+  return (
+    <div className="shell">
+
+      {/* Sidebar */}
+      <nav className="settings-nav">
+        <div className="brand">
+          <I.Logo size={22} />
+          <span>Settings</span>
+        </div>
+
+        <div className="section-label">Account</div>
+        <NavLink icon={I.Briefcase} label="Profile"       active />
+        <NavLink icon={I.Shield}    label="Security" />
+        <NavLink icon={I.Inbox}     label="Notifications" />
+
+        <div className="section-label">Workspace</div>
+        <NavLink icon={I.Layers}    label="General" />
+        <NavLink icon={I.Flag}      label="Billing" />
+        <NavLink icon={I.Megaphone} label="Members" />
+
+        <div className="section-label">Developer</div>
+        <NavLink icon={I.Rocket}    label="API keys" />
+        <NavLink icon={I.Book}      label="Webhooks" />
+      </nav>
+
+      {/* Main */}
+      <main className="settings-main">
+        <h1 className="page-title">Profile</h1>
+        <p className="page-subtitle">Manage your public identity and account details.</p>
+
+        {/* Toast */}
+        {saved && (
+          <div style={{ marginBottom: 20 }}>
+            <PLToast tone="ok" icon={I.Check} title="Profile saved." />
+          </div>
+        )}
+
+        {/* Avatar section */}
+        <div className="settings-section">
+          <div className="settings-section-header">
+            <I.Briefcase size={14} style={{ color: "var(--pl-ink-4)" }} />
+            <div>
+              <div className="settings-section-title">Avatar & display name</div>
+            </div>
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <div className="settings-row-label">Photo</div>
+              <div className="settings-row-desc">Shown on your profile and in comments.</div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <PLAvatar name="VC" color="var(--pl-cat-plum)" size={40} />
+              <PLButton kind="secondary" size="sm" icon={I.Upload}>Change</PLButton>
+            </div>
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <div className="settings-row-label">Display name</div>
+            </div>
+            <div style={{ width: 240 }}>
+              <PLInput value={displayName} onChange={e => setDisplayName(e.target.value)} />
+            </div>
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <div className="settings-row-label">Username</div>
+              <div className="settings-row-desc">paperline.design/<strong>{handle || "…"}</strong></div>
+            </div>
+            <div style={{ width: 240 }}>
+              <PLInput
+                value={handle}
+                onChange={e => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Contact */}
+        <div className="settings-section">
+          <div className="settings-section-header">
+            <I.Inbox size={14} style={{ color: "var(--pl-ink-4)" }} />
+            <div>
+              <div className="settings-section-title">Contact</div>
+            </div>
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <div className="settings-row-label">Email</div>
+              <div className="settings-row-desc">Used for login and notifications.</div>
+            </div>
+            <div style={{ width: 240 }}>
+              <PLInput type="email" icon={I.Inbox} value={email} onChange={e => setEmail(e.target.value)} />
+            </div>
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <div className="settings-row-label">Bio</div>
+              <div className="settings-row-desc">Shown on your public profile. Max 160 characters.</div>
+            </div>
+            <div style={{ width: 240 }}>
+              <PLTextarea
+                rows={3}
+                value={bio}
+                onChange={e => setBio(e.target.value)}
+                error={bio.length > 160 ? "Too long" : undefined}
+              />
+              {bio.length > 140 && (
+                <div style={{ fontSize: 11, fontFamily: "var(--pl-font-mono)", color: bio.length > 160 ? "var(--pl-danger-500)" : "var(--pl-ink-4)", marginTop: 4, textAlign: "right" }}>
+                  {bio.length}/160
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Appearance */}
+        <div className="settings-section">
+          <div className="settings-section-header">
+            <I.Sun size={14} style={{ color: "var(--pl-ink-4)" }} />
+            <div>
+              <div className="settings-section-title">Appearance</div>
+            </div>
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <div className="settings-row-label">Theme</div>
+              <div className="settings-row-desc">Choose light or dark mode.</div>
+            </div>
+            <PLTabs
+              items={[{ value: "light", label: "Light" }, { value: "dark", label: "Dark" }]}
+              value={theme}
+              onChange={setTheme}
+            />
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <div className="settings-row-label">Language</div>
+            </div>
+            <div style={{ width: 180 }}>
+              <PLSelect
+                value="en"
+                onChange={() => {}}
+                options={[
+                  { value: "en", label: "English" },
+                  { value: "fr", label: "Français" },
+                  { value: "de", label: "Deutsch" },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Notifications */}
+        <div className="settings-section">
+          <div className="settings-section-header">
+            <I.Megaphone size={14} style={{ color: "var(--pl-ink-4)" }} />
+            <div>
+              <div className="settings-section-title">Notifications</div>
+              <div className="settings-section-blurb">Choose which emails you receive.</div>
+            </div>
+          </div>
+          <ToggleRow label="Comments & mentions"    desc="When someone @-mentions you or replies to your comment." defaultOn={true}  />
+          <ToggleRow label="Project updates"         desc="Status changes and milestone completions."              defaultOn={true}  />
+          <ToggleRow label="Weekly digest"           desc="A summary of your workspace activity every Monday."     defaultOn={false} />
+          <ToggleRow label="Product news"            desc="New features and announcements from Paperline."         defaultOn={false} />
+        </div>
+
+        {/* Danger zone */}
+        <div className="danger-zone">
+          <div className="settings-section-header">
+            <I.Alert size={14} style={{ color: "var(--pl-danger-500)" }} />
+            <div>
+              <div className="settings-section-title" style={{ color: "var(--pl-danger-500)" }}>Danger zone</div>
+            </div>
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <div className="settings-row-label">Delete account</div>
+              <div className="settings-row-desc">Permanently remove your account and all associated data. This cannot be undone.</div>
+            </div>
+            <PLButton kind="danger" size="sm" icon={I.Trash} onClick={() => setModalOpen(true)}>
+              Delete account
+            </PLButton>
+          </div>
+        </div>
+
+        {/* Save bar */}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 4 }}>
+          <PLButton kind="ghost">Discard changes</PLButton>
+          <PLButton kind="primary" icon={I.Check} onClick={handleSave}>Save profile</PLButton>
+        </div>
+
+        {/* Confirm delete modal */}
+        <PLModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title="Delete account?"
+          description="This will permanently delete your account, projects, and all associated data. Type your username to confirm."
+          footer={
+            <>
+              <PLButton kind="ghost" onClick={() => setModalOpen(false)}>Cancel</PLButton>
+              <PLButton kind="danger" icon={I.Trash} onClick={() => setModalOpen(false)}>Yes, delete</PLButton>
+            </>
+          }
+        >
+          <PLField label={`Type "${handle}" to confirm`}>
+            <PLInput placeholder={handle} />
+          </PLField>
+        </PLModal>
+      </main>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

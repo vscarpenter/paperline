@@ -14,11 +14,28 @@ dist/
   paperline.css           Copy-paste CSS artifact
   *.global.jsx            Browser globals for static demos
 docs/
-  index.html              Design system spec
+  index.html              Design system spec (all tokens, components, icons)
   standalone.html         Self-contained spec bundle
 examples/
-  browser.html            Minimal browser integration
+  browser.html            Minimal single-card integration
+  dashboard.html          Product dashboard — sidebar nav, stats, table, activity feed
+  settings.html           Settings page — profile form, toggles, danger zone, modal
+  onboarding.html         Multi-step onboarding flow — plan picker, role selector, success state
 ```
+
+## Live Examples
+
+Open these in a browser (`npm run docs` → `http://localhost:8000`) to see the system assembled into realistic product screens:
+
+| Example | What it shows |
+|---|---|
+| [`examples/dashboard.html`](examples/dashboard.html) | Sidebar nav, stat cards, filterable project table with progress bars, team member list, activity feed, and a CSS bar chart — all dark-mode toggleable. |
+| [`examples/settings.html`](examples/settings.html) | Multi-section settings page with profile form, notification toggles, appearance picker, and a confirm-delete danger zone with a modal. |
+| [`examples/onboarding.html`](examples/onboarding.html) | 4-step onboarding card flow: account creation, role picker, plan selector, and a success state with animated step dots. |
+| [`examples/browser.html`](examples/browser.html) | Minimal single-card integration — the smallest possible starting point. |
+| [`docs/index.html`](docs/index.html) | Full design-system spec: every token, component, and icon documented interactively. |
+
+> **Screenshots** — once the repo is hosted, take browser screenshots of the three example pages and drop them in `meta/screenshots/`. Reference them here with `![Dashboard](meta/screenshots/dashboard.png)` etc. so GitHub visitors see the visual style at a glance.
 
 ## Use the Tokens
 
