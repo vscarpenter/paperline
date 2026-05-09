@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paperline — Reports Example</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../dist/paperline.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--pl-paper-0); color: var(--pl-ink-1); }
+
+  .topbar { border-bottom: 1px solid var(--pl-hairline); background: var(--pl-paper-card); }
+  .topbar-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; gap: 16px; padding: 14px 24px; }
+  .brand { display: inline-flex; align-items: center; gap: 8px; font-family: var(--pl-font-serif); font-size: 18px; color: var(--pl-ink-1); letter-spacing: -0.01em; text-decoration: none; }
+  .crumbs { font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pl-ink-4); }
+  .crumbs span { color: var(--pl-ink-1); }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 28px 24px 96px; }
+
+  .head {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 28px; flex-wrap: wrap;
+  }
+  .head .title-block .eyebrow { font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pl-accent-500); font-weight: 600; margin-bottom: 8px; }
+  .head h1 { font-family: var(--pl-font-serif); font-size: 40px; font-weight: 400; letter-spacing: -0.025em; color: var(--pl-ink-1); margin: 0 0 6px; line-height: 1.05; }
+  .head h1 em { font-style: italic; color: var(--pl-accent-500); }
+  .head .blurb { font-size: 14px; color: var(--pl-ink-3); margin: 0; max-width: 480px; line-height: 1.55; }
+  .head .actions { display: flex; gap: 8px; align-items: center; }
+
+  .filter-bar {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 14px 16px; background: var(--pl-paper-card);
+    border: 1px solid var(--pl-hairline); border-radius: 12px;
+    margin-bottom: 24px;
+  }
+  .filter-bar .label { font-family: var(--pl-font-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pl-ink-4); font-weight: 500; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 880px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .stat-card {
+    background: var(--pl-paper-card);
+    border: 1px solid var(--pl-hairline);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .stat-card .k { font-family: var(--pl-font-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pl-ink-4); font-weight: 500; }
+  .stat-card .v-row { display: flex; align-items: baseline; gap: 10px; }
+  .stat-card .v { font-family: var(--pl-font-serif); font-size: 36px; letter-spacing: -0.02em; color: var(--pl-ink-1); line-height: 1; }
+  .stat-card .delta { font-family: var(--pl-font-mono); font-size: 12px; font-weight: 600; }
+  .stat-card .delta.up { color: var(--pl-ok-500); }
+  .stat-card .delta.down { color: var(--pl-danger-500); }
+  .stat-card .spark { display: flex; align-items: flex-end; gap: 3px; height: 28px; margin-top: 6px; }
+  .stat-card .spark span { flex: 1; background: var(--pl-accent-200); border-radius: 2px 2px 0 0; min-height: 2px; }
+  .stat-card .spark span.peak { background: var(--pl-accent-500); }
+
+  /* Chart panel */
+  .panels { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 1000px) { .panels { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--pl-paper-card);
+    border: 1px solid var(--pl-hairline);
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .panel-head h3 { font-family: var(--pl-font-serif); font-size: 22px; font-weight: 400; letter-spacing: -0.015em; color: var(--pl-ink-1); margin: 0; }
+  .panel-head .meta { font-family: var(--pl-font-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pl-ink-4); font-weight: 500; }
+
+  /* Bar chart */
+  .chart {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+    height: 280px;
+  }
+  .y-axis { display: flex; flex-direction: column-reverse; justify-content: space-between; padding: 8px 0; }
+  .y-axis .tick { font-family: var(--pl-font-mono); font-size: 10px; color: var(--pl-ink-4); text-align: right; padding-right: 4px; }
+  .bars {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    align-items: end;
+    gap: 6px;
+    border-left: 1px solid var(--pl-hairline);
+    border-bottom: 1px solid var(--pl-hairline);
+    padding: 8px 8px 0 8px;
+    position: relative;
+  }
+  .bars::before, .bars::after {
+    content: ""; position: absolute; left: 0; right: 0;
+    border-top: 1px dashed var(--pl-hairline);
+  }
+  .bars::before { top: 33%; }
+  .bars::after  { top: 66%; }
+  .bar-col { display: flex; flex-direction: column; align-items: stretch; gap: 3px; height: 100%; justify-content: flex-end; }
+  .bar { background: var(--pl-accent-300); border-radius: 3px 3px 0 0; transition: background var(--pl-dur-1); }
+  .bar.primary { background: var(--pl-accent-500); }
+  .bar.secondary { background: var(--pl-paper-3); }
+  .bar-col .month { font-family: var(--pl-font-mono); font-size: 10px; color: var(--pl-ink-4); text-align: center; padding-top: 6px; letter-spacing: 0.05em; }
+
+  /* Legend */
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; padding-top: 14px; border-top: 1px solid var(--pl-hairline); }
+  .legend-item { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--pl-ink-3); }
+  .legend-item .dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* Right panel — top categories */
+  .cat-list { display: flex; flex-direction: column; gap: 10px; }
+  .cat-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
+  .cat-row .lbl { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--pl-ink-2); }
+  .cat-row .lbl .dot { width: 9px; height: 9px; border-radius: 999px; flex-shrink: 0; }
+  .cat-row .val { font-family: var(--pl-font-mono); font-size: 12px; color: var(--pl-ink-1); font-weight: 600; }
+  .cat-row .track { grid-column: 1 / -1; height: 4px; background: var(--pl-paper-2); border-radius: 999px; overflow: hidden; }
+  .cat-row .fill { height: 100%; border-radius: 999px; }
+
+  .panel-footer-link { font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pl-accent-500); text-decoration: none; font-weight: 600; align-self: flex-start; }
+
+  /* Table panel */
+  .table-panel { padding: 0; }
+  .table-panel .panel-head { padding: 18px 22px 16px; }
+
+  table.report {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  table.report th, table.report td {
+    text-align: left; padding: 12px 16px;
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  table.report th {
+    font-family: var(--pl-font-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--pl-ink-4); font-weight: 600;
+    background: var(--pl-paper-1);
+    border-bottom: 1px solid var(--pl-hairline-strong);
+  }
+  table.report td { color: var(--pl-ink-2); vertical-align: middle; }
+  table.report td .channel { display: flex; align-items: center; gap: 10px; }
+  table.report td .channel .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  table.report td .channel .name { color: var(--pl-ink-1); font-weight: 500; }
+  table.report td .num { font-family: var(--pl-font-mono); font-weight: 600; color: var(--pl-ink-1); }
+  table.report td .delta { font-family: var(--pl-font-mono); font-size: 11.5px; font-weight: 600; }
+  table.report td .delta.up { color: var(--pl-ok-500); }
+  table.report td .delta.down { color: var(--pl-danger-500); }
+  table.report td .delta.flat { color: var(--pl-ink-4); }
+
+  .progress-cell { display: flex; align-items: center; gap: 10px; }
+  .progress-cell .track { flex: 1; height: 4px; background: var(--pl-paper-2); border-radius: 999px; overflow: hidden; }
+  .progress-cell .fill { height: 100%; background: var(--pl-accent-500); border-radius: 999px; }
+  .progress-cell .pct { font-family: var(--pl-font-mono); font-size: 11px; color: var(--pl-ink-3); width: 36px; text-align: right; }
+
+  .table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 22px; gap: 12px;
+    border-top: 1px solid var(--pl-hairline);
+  }
+  .table-footer .meta { font-family: var(--pl-font-mono); font-size: 11px; color: var(--pl-ink-4); letter-spacing: 0.06em; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="pl-root">
+<div id="root"></div>
+
+<script type="text/babel" src="../dist/paperline-icons.global.jsx"></script>
+<script type="text/babel" src="../dist/paperline-components.global.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+const STATS = [
+  { k: "Sessions",     v: "48,219", delta: "+12.4%", dir: "up",   spark: [4,6,5,7,9,12,14,11,15,13,17,19] },
+  { k: "Conversions",  v: "1,284",  delta: "+8.1%",  dir: "up",   spark: [2,3,3,5,4,6,7,5,8,9,9,10] },
+  { k: "Avg. session", v: "3m 12s", delta: "-1.2%",  dir: "down", spark: [11,10,12,11,9,10,8,9,10,11,9,10] },
+  { k: "Bounce rate",  v: "31.4%",  delta: "-3.8%",  dir: "up",   spark: [14,12,11,10,8,9,10,8,7,6,6,5] },
+];
+
+const MONTHS = ["Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May"];
+const SERIES = [
+  { v: 22, p: 18 }, { v: 28, p: 22 }, { v: 32, p: 24 }, { v: 26, p: 20 },
+  { v: 38, p: 28 }, { v: 44, p: 32 }, { v: 41, p: 30 }, { v: 52, p: 36 },
+  { v: 58, p: 41 }, { v: 64, p: 44 }, { v: 70, p: 48 }, { v: 78, p: 56 },
+];
+
+const CATS = [
+  { name: "Direct",        color: "var(--pl-accent-500)", value: 18420, share: 38 },
+  { name: "Organic search",color: "var(--pl-cat-blue)",    value: 12110, share: 25 },
+  { name: "Newsletter",    color: "var(--pl-cat-amber)",   value:  8240, share: 17 },
+  { name: "Referral",      color: "var(--pl-cat-green)",   value:  5210, share: 11 },
+  { name: "Social",        color: "var(--pl-cat-rose)",    value:  4239, share:  9 },
+];
+
+const TABLE = [
+  { ch: "Direct",         color: "var(--pl-accent-500)", sessions: 18420, conv: 612, rate: 3.32, share: 38, delta: "+14.2%", dir: "up" },
+  { ch: "Organic search", color: "var(--pl-cat-blue)",    sessions: 12110, conv: 388, rate: 3.20, share: 25, delta: "+9.4%",  dir: "up" },
+  { ch: "Newsletter",     color: "var(--pl-cat-amber)",   sessions:  8240, conv: 196, rate: 2.38, share: 17, delta: "+0.6%",  dir: "flat" },
+  { ch: "Referral",       color: "var(--pl-cat-green)",   sessions:  5210, conv:  62, rate: 1.19, share: 11, delta: "-2.1%",  dir: "down" },
+  { ch: "Social",         color: "var(--pl-cat-rose)",    sessions:  4239, conv:  26, rate: 0.61, share:  9, delta: "-6.8%",  dir: "down" },
+];
+
+const fmt = (n) => n.toLocaleString("en-US");
+
+const App = () => {
+  const [range, setRange] = useState("30d");
+  const [view, setView] = useState("monthly");
+  const [channel, setChannel] = useState("all");
+
+  const ranges = [
+    { value: "7d",  label: "7 days" },
+    { value: "30d", label: "30 days" },
+    { value: "90d", label: "90 days" },
+    { value: "ytd", label: "YTD" },
+  ];
+
+  const channels = [
+    { value: "all",      label: "All channels" },
+    { value: "direct",   label: "Direct" },
+    { value: "organic",  label: "Organic search" },
+    { value: "news",     label: "Newsletter" },
+    { value: "referral", label: "Referral" },
+    { value: "social",   label: "Social" },
+  ];
+
+  const maxBar = 80;
+
+  return (
+    <div>
+      <header className="topbar">
+        <div className="topbar-inner">
+          <a className="brand" href="../index.html">
+            <I.Logo size={20} />
+            Paperline
+          </a>
+          <div className="crumbs"><span>Reports</span> · Acquisition</div>
+          <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
+            <PLButton kind="ghost" size="sm" icon={I.Help}>Help</PLButton>
+            <PLButton kind="ghost" size="sm" icon={I.Settings} />
+          </div>
+        </div>
+      </header>
+
+      <main className="wrap">
+
+        <div className="head">
+          <div className="title-block">
+            <div className="eyebrow">Q2 · Acquisition</div>
+            <h1>Where the <em>traffic comes from.</em></h1>
+            <p className="blurb">A breakdown of sessions, conversions, and conversion rate across the five channels we measure. Compared to the prior period.</p>
+          </div>
+          <div className="actions">
+            <PLButton kind="secondary" icon={I.Download}>Export CSV</PLButton>
+            <PLButton kind="primary" icon={I.Share}>Share report</PLButton>
+          </div>
+        </div>
+
+        {/* Filter bar */}
+        <div className="filter-bar">
+          <span className="label">Range</span>
+          <PLTabs items={ranges} value={range} onChange={setRange} />
+          <div style={{ width: 1, height: 22, background: "var(--pl-hairline)" }} />
+          <span className="label">Channel</span>
+          <div style={{ minWidth: 200 }}>
+            <PLSelect value={channel} onChange={e => setChannel(e.target.value)} options={channels} />
+          </div>
+          <div style={{ marginLeft: "auto", display: "flex", gap: 6, alignItems: "center" }}>
+            <PLBadge tone="ok" dot>Live</PLBadge>
+            <span style={{ fontFamily: "var(--pl-font-mono)", fontSize: 11, color: "var(--pl-ink-4)" }}>Updated 2 min ago</span>
+          </div>
+        </div>
+
+        {/* Stat cards */}
+        <div className="stat-grid">
+          {STATS.map(s => {
+            const max = Math.max(...s.spark);
+            return (
+              <div key={s.k} className="stat-card">
+                <span className="k">{s.k}</span>
+                <div className="v-row">
+                  <span className="v">{s.v}</span>
+                  <span className={`delta ${s.dir}`}>{s.dir === "up" ? "▲" : "▼"} {s.delta}</span>
+                </div>
+                <div className="spark">
+                  {s.spark.map((n, i) => (
+                    <span key={i} className={n === max ? "peak" : ""} style={{ height: `${(n / max) * 100}%` }} />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Chart + categories */}
+        <div className="panels">
+          <div className="panel">
+            <div className="panel-head">
+              <h3>Sessions over time</h3>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <PLTabs items={[{ value: "monthly", label: "Monthly" }, { value: "weekly", label: "Weekly" }]} value={view} onChange={setView} />
+              </div>
+            </div>
+
+            <div className="chart">
+              <div className="y-axis">
+                <span className="tick">0</span>
+                <span className="tick">25k</span>
+                <span className="tick">50k</span>
+                <span className="tick">75k</span>
+              </div>
+              <div className="bars">
+                {SERIES.map((d, i) => (
+                  <div key={i} className="bar-col">
+                    <div className="bar primary" style={{ height: `${(d.v / maxBar) * 88}%` }} title={`${MONTHS[i]}: ${d.v}k`} />
+                    <div className="bar secondary" style={{ height: `${(d.p / maxBar) * 88}%` }} title={`${MONTHS[i]} prior: ${d.p}k`} />
+                    <span className="month">{MONTHS[i]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="legend">
+              <span className="legend-item"><span className="dot" style={{ background: "var(--pl-accent-500)" }} />This year</span>
+              <span className="legend-item"><span className="dot" style={{ background: "var(--pl-paper-3)" }} />Prior year</span>
+              <span className="legend-item" style={{ marginLeft: "auto" }}><I.Info size={12} /> Hover bars for exact values</span>
+            </div>
+          </div>
+
+          <div className="panel">
+            <div className="panel-head">
+              <h3>Top categories</h3>
+              <span className="meta">By sessions</span>
+            </div>
+
+            <div className="cat-list">
+              {CATS.map(c => (
+                <div key={c.name} className="cat-row">
+                  <span className="lbl">
+                    <span className="dot" style={{ background: c.color }} />
+                    {c.name}
+                  </span>
+                  <span className="val">{fmt(c.value)}</span>
+                  <span className="track">
+                    <span className="fill" style={{ width: `${c.share * 2.6}%`, background: c.color }} />
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <a className="panel-footer-link" href="#">View segment report →</a>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="panel table-panel">
+          <div className="panel-head">
+            <h3>Channel breakdown</h3>
+            <span className="meta">5 channels · last 30 days</span>
+          </div>
+          <table className="report">
+            <thead>
+              <tr>
+                <th style={{ width: "26%" }}>Channel</th>
+                <th>Sessions</th>
+                <th>Conversions</th>
+                <th>Rate</th>
+                <th style={{ width: "20%" }}>Share</th>
+                <th>Δ Prior</th>
+              </tr>
+            </thead>
+            <tbody>
+              {TABLE.map(r => (
+                <tr key={r.ch}>
+                  <td>
+                    <div className="channel">
+                      <span className="dot" style={{ background: r.color }} />
+                      <span className="name">{r.ch}</span>
+                    </div>
+                  </td>
+                  <td><span className="num">{fmt(r.sessions)}</span></td>
+                  <td><span className="num">{fmt(r.conv)}</span></td>
+                  <td><span className="num">{r.rate.toFixed(2)}%</span></td>
+                  <td>
+                    <div className="progress-cell">
+                      <div className="track"><div className="fill" style={{ width: `${r.share * 2.5}%`, background: r.color }} /></div>
+                      <span className="pct">{r.share}%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`delta ${r.dir}`}>
+                      {r.dir === "up" ? "▲" : r.dir === "down" ? "▼" : "■"} {r.delta}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="table-footer">
+            <span className="meta">Showing 5 of 5 · Period 2026-04-08 → 2026-05-08</span>
+            <PLButton kind="ghost" size="sm" iconRight={I.ChevRight}>Detailed segments</PLButton>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

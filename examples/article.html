@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paperline — Article Example</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../dist/paperline.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--pl-paper-0); color: var(--pl-ink-1); }
+
+  /* Sticky top bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(251, 248, 243, 0.85);
+    backdrop-filter: saturate(160%) blur(10px);
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  .topbar-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 24px;
+  }
+  .topbar .brand { display: inline-flex; align-items: center; gap: 8px; font-family: var(--pl-font-serif); font-size: 18px; color: var(--pl-ink-1); letter-spacing: -0.01em; text-decoration: none; }
+  .topbar .progress { flex: 1; height: 3px; background: var(--pl-paper-2); border-radius: 999px; overflow: hidden; }
+  .topbar .progress-fill { height: 100%; background: var(--pl-accent-500); width: 0%; transition: width 90ms linear; }
+  .topbar .reading-meta { font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-ink-4); }
+
+  /* Hero */
+  .hero { max-width: 760px; margin: 0 auto; padding: 72px 24px 32px; }
+  .crumbs { display: flex; align-items: center; gap: 6px; font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pl-ink-4); margin-bottom: 22px; }
+  .crumbs a { color: var(--pl-ink-3); text-decoration: none; font-weight: 500; }
+  .crumbs .sep { color: var(--pl-ink-5); }
+
+  .hero h1 {
+    font-family: var(--pl-font-serif); font-weight: 400;
+    font-size: clamp(38px, 5.4vw, 62px);
+    line-height: 1.04; letter-spacing: -0.025em;
+    margin: 0 0 18px;
+    color: var(--pl-ink-1);
+  }
+  .hero h1 em { font-style: italic; color: var(--pl-accent-500); }
+
+  .deck {
+    font-family: var(--pl-font-serif); font-style: italic; font-weight: 400;
+    font-size: 22px; line-height: 1.45; letter-spacing: -0.01em;
+    color: var(--pl-ink-2);
+    margin: 0 0 36px;
+  }
+
+  .byline {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 0;
+    border-top: 1px solid var(--pl-hairline);
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  .byline-avatar { width: 38px; height: 38px; border-radius: 999px; background: var(--pl-accent-100); color: var(--pl-accent-700); display: grid; place-items: center; font-family: var(--pl-font-serif); font-size: 16px; }
+  .byline-meta { display: flex; flex-direction: column; gap: 2px; }
+  .byline-name { font-size: 13.5px; color: var(--pl-ink-1); font-weight: 600; }
+  .byline-detail { font-family: var(--pl-font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-ink-4); }
+  .byline-actions { margin-left: auto; display: flex; gap: 6px; }
+
+  /* Article body */
+  .body-wrap { max-width: 680px; margin: 0 auto; padding: 48px 24px 32px; }
+  .body-wrap p {
+    font-family: var(--pl-font-serif); font-weight: 400;
+    font-size: 19px; line-height: 1.65; letter-spacing: 0.005em;
+    color: var(--pl-ink-2); margin: 0 0 24px;
+  }
+  .body-wrap p.lede {
+    font-size: 22px; line-height: 1.55; color: var(--pl-ink-1);
+  }
+  .body-wrap p.lede::first-letter {
+    font-family: var(--pl-font-serif); font-size: 64px; line-height: 0.9;
+    float: left; padding: 4px 10px 0 0; color: var(--pl-accent-500);
+  }
+  .body-wrap h2 {
+    font-family: var(--pl-font-serif); font-weight: 400;
+    font-size: 30px; line-height: 1.15; letter-spacing: -0.015em;
+    color: var(--pl-ink-1); margin: 48px 0 16px;
+  }
+  .body-wrap h3 {
+    font-family: var(--pl-font-serif); font-weight: 400;
+    font-size: 22px; letter-spacing: -0.01em;
+    color: var(--pl-ink-1); margin: 32px 0 12px;
+  }
+  .body-wrap a { color: var(--pl-accent-500); text-decoration: underline; text-decoration-color: var(--pl-accent-200); text-underline-offset: 3px; }
+  .body-wrap a:hover { text-decoration-color: var(--pl-accent-500); }
+
+  /* Pull quote */
+  .pull {
+    margin: 48px -16px;
+    padding: 24px 32px;
+    border-left: 3px solid var(--pl-accent-500);
+    background: linear-gradient(to right, var(--pl-accent-50), transparent 60%);
+    border-radius: 0 8px 8px 0;
+  }
+  .pull q {
+    quotes: none;
+    font-family: var(--pl-font-serif); font-style: italic;
+    font-size: 26px; line-height: 1.3; letter-spacing: -0.01em;
+    color: var(--pl-ink-1);
+  }
+  .pull cite {
+    display: block; margin-top: 12px;
+    font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--pl-ink-4); font-style: normal;
+  }
+
+  /* Code block */
+  .code {
+    background: var(--pl-paper-1);
+    border: 1px solid var(--pl-hairline);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 32px 0;
+    font-family: var(--pl-font-mono); font-size: 12.5px; line-height: 1.6;
+    color: var(--pl-ink-2);
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code .key   { color: var(--pl-cat-blue); }
+  .code .val   { color: var(--pl-cat-amber); }
+  .code .com   { color: var(--pl-ink-4); font-style: italic; }
+  .code .punc  { color: var(--pl-ink-3); }
+
+  /* Inline code */
+  code.inline {
+    font-family: var(--pl-font-mono);
+    font-size: 0.86em;
+    padding: 1px 6px; border-radius: 4px;
+    background: var(--pl-paper-1);
+    border: 1px solid var(--pl-hairline);
+    color: var(--pl-ink-2);
+  }
+
+  /* Stats strip */
+  .strip {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0; margin: 48px 0;
+    border: 1px solid var(--pl-hairline);
+    border-radius: 12px; overflow: hidden;
+    background: var(--pl-paper-card);
+  }
+  .strip > div {
+    padding: 20px 18px;
+    display: flex; flex-direction: column; gap: 6px;
+    border-right: 1px solid var(--pl-hairline);
+  }
+  .strip > div:last-child { border-right: none; }
+  .strip .k { font-family: var(--pl-font-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pl-ink-4); font-weight: 500; }
+  .strip .v { font-family: var(--pl-font-serif); font-size: 32px; letter-spacing: -0.02em; color: var(--pl-ink-1); }
+  .strip .h { font-size: 12px; color: var(--pl-ink-3); }
+
+  /* Footnotes */
+  .footnotes {
+    max-width: 680px; margin: 64px auto 0;
+    padding: 24px 24px 0;
+    border-top: 1px solid var(--pl-hairline);
+  }
+  .footnotes h4 {
+    font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--pl-ink-4); font-weight: 600; margin: 0 0 12px;
+  }
+  .footnotes ol { margin: 0; padding: 0 0 0 20px; }
+  .footnotes li { font-size: 13px; line-height: 1.55; color: var(--pl-ink-3); margin-bottom: 6px; }
+  .footnotes a { color: var(--pl-accent-500); text-decoration: none; }
+
+  /* Related */
+  .related-wrap { max-width: 1000px; margin: 80px auto 0; padding: 32px 24px 80px; border-top: 1px solid var(--pl-hairline); }
+  .related-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 24px; }
+  .related-head h3 { font-family: var(--pl-font-serif); font-size: 26px; font-weight: 400; letter-spacing: -0.015em; color: var(--pl-ink-1); margin: 0; }
+  .related-head .more { font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-accent-500); text-decoration: none; font-weight: 600; }
+  .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .related-card {
+    background: var(--pl-paper-card);
+    border: 1px solid var(--pl-hairline);
+    border-radius: 12px; padding: 18px 18px 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    text-decoration: none; color: inherit;
+    transition: transform var(--pl-dur-1), box-shadow var(--pl-dur-1);
+  }
+  .related-card:hover { transform: translateY(-2px); box-shadow: var(--pl-shadow-md); }
+  .related-card .eyebrow { font-family: var(--pl-font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-ink-4); font-weight: 500; }
+  .related-card .title { font-family: var(--pl-font-serif); font-size: 18px; line-height: 1.25; letter-spacing: -0.01em; color: var(--pl-ink-1); }
+  .related-card .meta { font-family: var(--pl-font-mono); font-size: 10.5px; color: var(--pl-ink-4); margin-top: auto; padding-top: 10px; }
+
+  @media (max-width: 700px) {
+    .related-grid { grid-template-columns: 1fr; }
+    .strip { grid-template-columns: 1fr; }
+    .strip > div { border-right: none; border-bottom: 1px solid var(--pl-hairline); }
+    .strip > div:last-child { border-bottom: none; }
+  }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="pl-root">
+<div id="root"></div>
+
+<script type="text/babel" src="../dist/paperline-icons.global.jsx"></script>
+<script type="text/babel" src="../dist/paperline-components.global.jsx"></script>
+
+<script type="text/babel">
+const { useEffect, useRef, useState } = React;
+
+const App = () => {
+  const articleRef = useRef(null);
+  const [progress, setProgress] = useState(0);
+  const [bookmarked, setBookmarked] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const el = articleRef.current;
+      if (!el) return;
+      const total = el.scrollHeight - window.innerHeight;
+      const scrolled = Math.max(0, Math.min(window.scrollY, total));
+      setProgress(total > 0 ? (scrolled / total) * 100 : 0);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div ref={articleRef}>
+      <div className="topbar">
+        <div className="topbar-inner">
+          <a className="brand" href="../index.html">
+            <I.Logo size={20} />
+            Paperline
+          </a>
+          <div className="progress" aria-hidden="true">
+            <div className="progress-fill" style={{ width: `${progress}%` }} />
+          </div>
+          <span className="reading-meta">8 min read</span>
+        </div>
+      </div>
+
+      <article>
+        <header className="hero">
+          <div className="crumbs">
+            <a href="../index.html">Examples</a>
+            <span className="sep">/</span>
+            <a href="#">Field notes</a>
+            <span className="sep">/</span>
+            <span>Issue 03</span>
+          </div>
+
+          <h1>The slow case for <em>warmer software.</em></h1>
+
+          <p className="deck">
+            What changes when you stop treating product UI like a console — and start treating it like a publication.
+          </p>
+
+          <div className="byline">
+            <div className="byline-avatar">M</div>
+            <div className="byline-meta">
+              <div className="byline-name">Maya Tanaka</div>
+              <div className="byline-detail">May 8, 2026 · Field notes</div>
+            </div>
+            <div className="byline-actions">
+              <PLButton kind="ghost" size="sm" icon={bookmarked ? I.Check : I.Tag} onClick={() => setBookmarked(b => !b)}>
+                {bookmarked ? "Saved" : "Save"}
+              </PLButton>
+              <PLButton kind="ghost" size="sm" icon={I.Share}>Share</PLButton>
+            </div>
+          </div>
+        </header>
+
+        <section className="body-wrap">
+          <p className="lede">
+            For the last decade, product UI has been getting louder. Brighter blues, plumper buttons, a tireless arms race for visual emphasis between every section of every page. The result is software that reads like a slot machine — every element pulling at your attention, no element earning it.
+          </p>
+
+          <p>
+            We started Paperline by reversing the question. Instead of <em>how do we get the user to act</em>, we asked <em>what does the user need to read</em>. The answers were quieter than expected: a date, a status, a sentence of context, a single primary action. Most of the page wanted to recede.
+          </p>
+
+          <h2>Paper, not panels</h2>
+
+          <p>
+            The first move was the surface. Cool grey UI panels carry an assumed authority — the airport-departures-board mood — but they also flatten everything onto a single visual plane. Warm off-white surfaces, the color of cream stock, restore the sense that the page is a thing being <em>set</em>, not a screen being <em>rendered</em>.
+          </p>
+
+          <p>
+            Set against warm paper, slate near-black ink does the typographic work that silver-grey on white never quite does. The contrast is high without being clinical. Headings sit; they don't shout. <code className="inline">--pl-ink-1</code> against <code className="inline">--pl-paper-0</code> is the default for a reason.
+          </p>
+
+          <div className="pull">
+            <q>The page is a thing being set, not a screen being rendered.</q>
+            <cite>Field notes · Issue 03</cite>
+          </div>
+
+          <h2>A type stack with three jobs</h2>
+
+          <p>
+            Most design systems make a single typeface do every job — headings, body, code — and the seams show. We split the work three ways. <a href="#">Instrument Serif</a> handles every heading, top to bottom, because the goal is editorial gravitas, not UI emphasis. The system sans stack carries body and UI: it's fast, legible, free, and already on every device. JetBrains Mono signals technical content — dates, IDs, eyebrows, tabular numerics — and only that.
+          </p>
+
+          <p>
+            The split feels obvious in retrospect: voice, work, signal. It also makes layout decisions easier. Anything in mono is a <em>fact</em>; anything in serif is a <em>statement</em>; anything in sans is the <em>page itself</em>.
+          </p>
+
+          <pre className="code"><span className="com">/* The whole type stack, in three lines. */</span>
+<span className="key">--pl-font-serif</span><span className="punc">:</span> <span className="val">"Instrument Serif"</span>, ui-serif, Georgia, serif<span className="punc">;</span>
+<span className="key">--pl-font-sans</span><span className="punc">:</span>  <span className="val">system-ui</span>, -apple-system, "Segoe UI", Roboto, sans-serif<span className="punc">;</span>
+<span className="key">--pl-font-mono</span><span className="punc">:</span>  <span className="val">"JetBrains Mono"</span>, ui-monospace, "SF Mono", monospace<span className="punc">;</span></pre>
+
+          <h2>One accent, used sparingly</h2>
+
+          <p>
+            The plum is the only saturated color in the system. It activates the primary path — submit, confirm, the next step — and selection state. Everything else stays in ink. The result: when plum appears, it <em>means</em> something. A page can have one primary action, not five.
+          </p>
+
+          <div className="strip">
+            <div>
+              <span className="k">Surfaces</span>
+              <span className="v">5</span>
+              <span className="h">paper 0–3 plus card</span>
+            </div>
+            <div>
+              <span className="k">Ink steps</span>
+              <span className="v">5</span>
+              <span className="h">slate 900 down to 300</span>
+            </div>
+            <div>
+              <span className="k">Accent</span>
+              <span className="v">1</span>
+              <span className="h">plum, sparingly</span>
+            </div>
+          </div>
+
+          <h2>What the system gives back</h2>
+
+          <p>
+            The visible payoff is the look. The invisible payoff is decision speed. When you sit down to design a new page and the type stack, surface, accent, and status palette have already been decided — for good reasons you can articulate — the work collapses to <em>arrangement</em>. The thinking moves up a layer, to what the page is for, instead of which shade of grey the divider should be.
+          </p>
+
+          <p>
+            That's the slow case for warmer software. Calmer surfaces, fewer decisions, and a finished product that reads like a well-set page. We hope you build something quiet with it.
+          </p>
+        </section>
+
+        <aside className="footnotes">
+          <h4>Notes</h4>
+          <ol>
+            <li>Paperline is open-source and MIT-licensed. <a href="../index.html">View the examples</a>.</li>
+            <li>The serif (Instrument Serif) ships at a single weight — 400 — by design. We use size and tracking, not weight, to differentiate heading levels.</li>
+            <li>The system sans stack resolves to San Francisco on macOS / iOS, Segoe UI on Windows, Roboto on Android, and a sensible fallback elsewhere. No web font on the body critical path.</li>
+          </ol>
+        </aside>
+      </article>
+
+      <section className="related-wrap">
+        <div className="related-head">
+          <h3>More from Field notes</h3>
+          <a href="#" className="more">All issues →</a>
+        </div>
+        <div className="related-grid">
+          <a className="related-card" href="#">
+            <span className="eyebrow">Issue 02 · Tokens</span>
+            <span className="title">Why we shipped a five-step ink scale</span>
+            <span className="meta">6 min · Apr 2026</span>
+          </a>
+          <a className="related-card" href="#">
+            <span className="eyebrow">Issue 01 · Process</span>
+            <span className="title">Designing for the second reader</span>
+            <span className="meta">9 min · Mar 2026</span>
+          </a>
+          <a className="related-card" href="../index.html">
+            <span className="eyebrow">Examples · Index</span>
+            <span className="title">All nine Paperline examples in one place</span>
+            <span className="meta">Browse · 2026</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

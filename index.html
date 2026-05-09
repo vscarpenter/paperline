@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paperline — Examples</title>
+<meta name="description" content="A static showcase of the Paperline design system: marketing, dashboard, settings, onboarding, inbox, reports, article, and authentication examples." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="dist/paperline.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--pl-paper-0); color: var(--pl-ink-1); }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 56px 24px 80px; }
+
+  .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 56px; }
+  .brand-mark {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--pl-ink-1); color: var(--pl-paper-card);
+    display: grid; place-items: center;
+  }
+  .brand-name { font-family: var(--pl-font-serif); font-size: 20px; letter-spacing: -0.01em; color: var(--pl-ink-1); }
+  .brand-ver  { font-family: var(--pl-font-mono); font-size: 11px; padding: 3px 8px; border: 1px solid var(--pl-hairline-strong); border-radius: 999px; color: var(--pl-ink-3); background: var(--pl-paper-card); }
+  .top-link   { margin-left: auto; font-size: 13px; color: var(--pl-ink-3); text-decoration: none; }
+  .top-link:hover { color: var(--pl-ink-1); }
+
+  .hero h1 {
+    font-family: var(--pl-font-serif); font-weight: 400;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 1.02; letter-spacing: -0.03em;
+    margin: 0 0 24px; max-width: 880px;
+    color: var(--pl-ink-1);
+  }
+  .hero h1 em { color: var(--pl-accent-500); font-style: italic; }
+  .hero p {
+    font-size: 17px; line-height: 1.55;
+    color: var(--pl-ink-2); max-width: 640px; margin: 0 0 28px;
+  }
+  .hero .cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; text-decoration: none;
+    transition: transform var(--pl-dur-1), box-shadow var(--pl-dur-1), background var(--pl-dur-1);
+  }
+  .cta-primary {
+    background: var(--pl-accent-500); color: var(--pl-accent-ink);
+    box-shadow: var(--pl-shadow-sm);
+  }
+  .cta-primary:hover { background: var(--pl-accent-600); box-shadow: var(--pl-shadow-md); }
+  .cta-ghost { color: var(--pl-ink-2); border: 1px solid var(--pl-hairline-strong); background: var(--pl-paper-card); }
+  .cta-ghost:hover { background: var(--pl-paper-1); }
+
+  .stats {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    margin: 40px 0 64px; padding: 20px 0;
+    border-top: 1px solid var(--pl-hairline);
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  .stat { display: flex; flex-direction: column; gap: 4px; min-width: 120px; }
+  .stat .k { font-family: var(--pl-font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-ink-4); font-weight: 500; }
+  .stat .v { font-family: var(--pl-font-serif); font-size: 28px; color: var(--pl-ink-1); letter-spacing: -0.02em; }
+
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px; margin: 56px 0 20px;
+  }
+  .section-head .num { font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-accent-500); font-weight: 600; }
+  .section-head h2 { font-family: var(--pl-font-serif); font-size: 28px; font-weight: 400; letter-spacing: -0.015em; color: var(--pl-ink-1); margin: 0; }
+
+  .grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .card {
+    display: flex; flex-direction: column;
+    text-decoration: none; color: inherit;
+    background: var(--pl-paper-card);
+    border: 1px solid var(--pl-hairline-strong);
+    border-radius: 14px; overflow: hidden;
+    transition: transform var(--pl-dur-1) var(--pl-ease), box-shadow var(--pl-dur-1) var(--pl-ease), border-color var(--pl-dur-1);
+    box-shadow: var(--pl-shadow-xs);
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--pl-shadow-lg); border-color: var(--pl-accent-300); }
+
+  .card-thumb {
+    aspect-ratio: 16 / 10;
+    background: var(--pl-paper-1);
+    border-bottom: 1px solid var(--pl-hairline);
+    position: relative; overflow: hidden;
+  }
+  .card-thumb::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(120% 80% at 0% 0%, var(--pl-paper-card) 0%, transparent 60%),
+      radial-gradient(120% 80% at 100% 100%, var(--pl-accent-50) 0%, transparent 60%);
+  }
+  .thumb-grid {
+    position: absolute; inset: 18px;
+    display: grid; gap: 8px;
+  }
+  .thumb-bar { background: var(--pl-paper-card); border: 1px solid var(--pl-hairline); border-radius: 6px; }
+  .thumb-bar.accent { background: var(--pl-accent-100); border-color: var(--pl-accent-200); }
+  .thumb-bar.ink { background: var(--pl-ink-1); border-color: var(--pl-ink-1); }
+
+  .card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; }
+  .card-eyebrow { font-family: var(--pl-font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-ink-4); font-weight: 500; }
+  .card-title { font-family: var(--pl-font-serif); font-size: 20px; font-weight: 400; letter-spacing: -0.01em; color: var(--pl-ink-1); }
+  .card-blurb { font-size: 13px; line-height: 1.55; color: var(--pl-ink-3); margin: 4px 0 0; }
+  .card-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .meta-pill {
+    font-family: var(--pl-font-mono); font-size: 10px;
+    padding: 3px 7px; border-radius: 999px;
+    background: var(--pl-paper-1); color: var(--pl-ink-3);
+    border: 1px solid var(--pl-hairline);
+  }
+
+  footer {
+    margin-top: 72px; padding-top: 24px;
+    border-top: 1px solid var(--pl-hairline);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+    font-size: 12px; color: var(--pl-ink-4);
+  }
+  footer a { color: var(--pl-ink-3); text-decoration: none; }
+  footer a:hover { color: var(--pl-ink-1); }
+</style>
+</head>
+<body class="pl-root">
+  <main class="wrap">
+    <header class="topbar">
+      <div class="brand-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 4h11l3 3v13H5z" />
+          <path d="M16 4v3h3" />
+        </svg>
+      </div>
+      <span class="brand-name">Paperline</span>
+      <span class="brand-ver">v1.0</span>
+      <a class="top-link" href="https://github.com/vscarpenter/paperline">GitHub →</a>
+    </header>
+
+    <section class="hero">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:18px;">
+        <span style="font-family: var(--pl-font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-accent-500); font-weight: 600;">Examples · 09</span>
+      </div>
+      <h1>A warm, editorial design system, <em>seen in the wild.</em></h1>
+      <p>
+        Nine sample pages — from marketing landing to inbox to long-form article — assembled from the same Paperline tokens, components, and icons. Every page links back to its source so you can copy any piece into your own work.
+      </p>
+      <div class="cta-row">
+        <a class="cta cta-primary" href="docs/index.html">Open the spec</a>
+        <a class="cta cta-ghost" href="examples/landing.html">Marketing example</a>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat"><span class="k">Components</span><span class="v">31</span></div>
+      <div class="stat"><span class="k">Icons</span><span class="v">38</span></div>
+      <div class="stat"><span class="k">Tokens</span><span class="v">70+</span></div>
+      <div class="stat"><span class="k">Themes</span><span class="v">Light · Dark</span></div>
+      <div class="stat"><span class="k">License</span><span class="v">MIT</span></div>
+    </section>
+
+    <div class="section-head">
+      <h2>Product surfaces</h2>
+      <span class="num">App UIs</span>
+    </div>
+    <div class="grid">
+
+      <a class="card" href="examples/dashboard.html">
+        <div class="card-thumb">
+          <div class="thumb-grid" style="grid-template-columns: 70px 1fr; grid-template-rows: 18px 1fr;">
+            <div class="thumb-bar" style="grid-column: 1 / -1;"></div>
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar accent"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-eyebrow">01 · Dashboard</span>
+          <span class="card-title">Project dashboard</span>
+          <p class="card-blurb">Sidebar nav, stat cards, filterable project table, team list, and activity feed.</p>
+          <div class="card-meta"><span class="meta-pill">PLStat</span><span class="meta-pill">PLTable</span><span class="meta-pill">PLProgress</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="examples/inbox.html">
+        <div class="card-thumb">
+          <div class="thumb-grid" style="grid-template-columns: 50px 80px 1fr;">
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar accent"></div>
+            <div class="thumb-bar"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-eyebrow">02 · Inbox</span>
+          <span class="card-title">Mail-style inbox</span>
+          <p class="card-blurb">Three-pane layout — folders, message list, message body. Hover and selection states.</p>
+          <div class="card-meta"><span class="meta-pill">PLAvatar</span><span class="meta-pill">PLBadge</span><span class="meta-pill">PLTag</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="examples/reports.html">
+        <div class="card-thumb">
+          <div class="thumb-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; grid-template-rows: 1fr 1.5fr;">
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar accent"></div>
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar" style="grid-column: 1 / -1;"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-eyebrow">03 · Analytics</span>
+          <span class="card-title">Reports &amp; analytics</span>
+          <p class="card-blurb">Date-range filters, stat cards, a CSS bar chart, and a detailed breakdown table.</p>
+          <div class="card-meta"><span class="meta-pill">PLStat</span><span class="meta-pill">PLTabs</span><span class="meta-pill">PLTable</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="examples/settings.html">
+        <div class="card-thumb">
+          <div class="thumb-grid" style="grid-template-columns: 1fr 60px;">
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar accent"></div>
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-eyebrow">04 · Settings</span>
+          <span class="card-title">Account settings</span>
+          <p class="card-blurb">Multi-section profile form with toggles, appearance picker, and a confirm-delete danger zone.</p>
+          <div class="card-meta"><span class="meta-pill">PLField</span><span class="meta-pill">PLToggle</span><span class="meta-pill">PLModal</span></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="section-head">
+      <h2>Marketing &amp; entry</h2>
+      <span class="num">Public surfaces</span>
+    </div>
+    <div class="grid">
+
+      <a class="card" href="examples/landing.html">
+        <div class="card-thumb">
+          <div class="thumb-grid" style="grid-template-columns: 1fr; grid-template-rows: 30px 1fr 24px;">
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar accent"></div>
+            <div class="thumb-bar"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-eyebrow">05 · Marketing</span>
+          <span class="card-title">Landing page</span>
+          <p class="card-blurb">Editorial hero, feature grid, pricing tiers, and testimonial — every typographic register on display.</p>
+          <div class="card-meta"><span class="meta-pill">Display</span><span class="meta-pill">PLBadge</span><span class="meta-pill">PLCard</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="examples/signin.html">
+        <div class="card-thumb">
+          <div class="thumb-grid" style="grid-template-columns: 1fr; place-items: center;">
+            <div class="thumb-bar accent" style="width: 60%; height: 60%;"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-eyebrow">06 · Auth</span>
+          <span class="card-title">Sign in</span>
+          <p class="card-blurb">Centered form card, OAuth providers, focus states, and inline validation messaging.</p>
+          <div class="card-meta"><span class="meta-pill">PLField</span><span class="meta-pill">PLInput</span><span class="meta-pill">PLDivider</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="examples/onboarding.html">
+        <div class="card-thumb">
+          <div class="thumb-grid" style="grid-template-columns: 1fr; place-items: center;">
+            <div class="thumb-bar" style="width: 70%; height: 60%;"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-eyebrow">07 · Flow</span>
+          <span class="card-title">Onboarding</span>
+          <p class="card-blurb">Four-step card flow: account, role, plan, success. Step dots and animated transitions.</p>
+          <div class="card-meta"><span class="meta-pill">PLAlert</span><span class="meta-pill">PLBadge</span><span class="meta-pill">PLDivider</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="examples/article.html">
+        <div class="card-thumb">
+          <div class="thumb-grid" style="grid-template-columns: 1fr; grid-template-rows: 24px 14px 14px 14px;">
+            <div class="thumb-bar accent"></div>
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar"></div>
+            <div class="thumb-bar"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-eyebrow">08 · Editorial</span>
+          <span class="card-title">Article reader</span>
+          <p class="card-blurb">Long-form reading: serif body, pull quote, code block, and a footnoted byline. The type stack at scale.</p>
+          <div class="card-meta"><span class="meta-pill">Serif</span><span class="meta-pill">Mono</span><span class="meta-pill">PLDivider</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="examples/browser.html">
+        <div class="card-thumb">
+          <div class="thumb-grid" style="grid-template-columns: 1fr; place-items: center;">
+            <div class="thumb-bar" style="width: 40%; height: 35%;"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-eyebrow">09 · Minimal</span>
+          <span class="card-title">Drop-in card</span>
+          <p class="card-blurb">The smallest possible integration — one card, one button. Copy as your starting template.</p>
+          <div class="card-meta"><span class="meta-pill">PLCard</span><span class="meta-pill">PLButton</span></div>
+        </div>
+      </a>
+
+    </div>
+
+    <footer>
+      <span>Paperline · MIT · Created by <a href="https://vinny.dev/">Vinny Carpenter</a></span>
+      <span><a href="https://github.com/vscarpenter/paperline">Source</a> · <a href="docs/index.html">Spec</a> · <a href="docs/USAGE.md">Usage</a></span>
+    </footer>
+  </main>
+</body>
+</html>

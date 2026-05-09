@@ -1,0 +1,56 @@
+name: Deploy GitHub Pages
+
+# Publishes the Paperline showcase site.
+# Mirrors the local repo layout (examples/ and dist/ as siblings under _site/)
+# so example pages keep working with their existing '../dist/paperline.css'
+# references — no path rewriting.
+#
+# Inputs are limited to repo file contents and trusted action outputs;
+# no GitHub event payload fields are interpolated into shell commands.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage site
+        run: |
+          mkdir -p _site
+          cp index.html _site/index.html
+          cp -r dist _site/dist
+          cp -r examples _site/examples
+          cp -r docs _site/docs
+          test -f _site/index.html
+          test -f _site/dist/paperline.css
+          test -f _site/examples/dashboard.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

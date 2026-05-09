@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paperline — Inbox Example</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../dist/paperline.css" />
+
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body { background: var(--pl-paper-0); color: var(--pl-ink-1); height: 100vh; overflow: hidden; }
+  #root { height: 100%; }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 220px 360px 1fr;
+    height: 100%;
+    background: var(--pl-paper-0);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--pl-paper-1);
+    border-right: 1px solid var(--pl-hairline);
+    display: flex; flex-direction: column;
+  }
+  .sidebar-head {
+    padding: 16px 18px 12px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--pl-hairline);
+  }
+  .sidebar-head .brand { font-family: var(--pl-font-serif); font-size: 18px; color: var(--pl-ink-1); letter-spacing: -0.01em; }
+  .sidebar-compose { padding: 14px 16px 8px; }
+  .sidebar-section {
+    font-family: var(--pl-font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--pl-ink-4); font-weight: 600;
+    padding: 16px 18px 6px;
+  }
+  .nav-list { display: flex; flex-direction: column; padding: 0 8px 8px; gap: 1px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 10px; border-radius: 6px;
+    font-size: 13px; color: var(--pl-ink-2); cursor: pointer;
+    transition: background var(--pl-dur-1);
+  }
+  .nav-item:hover { background: var(--pl-paper-2); }
+  .nav-item.active { background: var(--pl-accent-50); color: var(--pl-accent-700); }
+  .nav-item.active svg { color: var(--pl-accent-500); }
+  .nav-item .label { flex: 1; }
+  .nav-item .count { font-family: var(--pl-font-mono); font-size: 10.5px; color: var(--pl-ink-4); font-weight: 500; }
+  .nav-item.active .count { color: var(--pl-accent-500); }
+
+  .label-dot { width: 8px; height: 8px; border-radius: 999px; }
+
+  /* Message list */
+  .list { background: var(--pl-paper-card); border-right: 1px solid var(--pl-hairline); display: flex; flex-direction: column; min-height: 0; }
+  .list-head { padding: 14px 18px; border-bottom: 1px solid var(--pl-hairline); display: flex; align-items: center; gap: 10px; }
+  .list-head h2 { font-family: var(--pl-font-serif); font-size: 22px; font-weight: 400; letter-spacing: -0.015em; color: var(--pl-ink-1); margin: 0; }
+  .list-toolbar { padding: 10px 14px; border-bottom: 1px solid var(--pl-hairline); display: flex; gap: 6px; align-items: center; background: var(--pl-paper-0); }
+  .list-toolbar .search-wrap { flex: 1; }
+  .list-scroll { flex: 1; overflow-y: auto; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--pl-hairline);
+    cursor: pointer;
+    transition: background var(--pl-dur-1);
+    position: relative;
+  }
+  .row:hover { background: var(--pl-paper-1); }
+  .row.selected { background: var(--pl-accent-50); }
+  .row.selected::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--pl-accent-500);
+  }
+  .row.unread .from { font-weight: 700; color: var(--pl-ink-1); }
+  .row.unread .subject { color: var(--pl-ink-1); font-weight: 600; }
+  .row .avatar {
+    width: 36px; height: 36px; border-radius: 999px;
+    display: grid; place-items: center;
+    font-family: var(--pl-font-serif); font-size: 14px;
+    background: var(--pl-paper-1); color: var(--pl-ink-2);
+    border: 1px solid var(--pl-hairline);
+  }
+  .row .body { min-width: 0; }
+  .row .row-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .row .from { font-size: 13px; color: var(--pl-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .when { font-family: var(--pl-font-mono); font-size: 10.5px; color: var(--pl-ink-4); flex-shrink: 0; letter-spacing: 0.04em; }
+  .row .subject { font-size: 13px; color: var(--pl-ink-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .preview { font-size: 12px; color: var(--pl-ink-3); margin-top: 4px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .row .row-tags { display: flex; gap: 4px; margin-top: 8px; }
+  .row .unread-dot { position: absolute; left: 6px; top: 21px; width: 6px; height: 6px; border-radius: 999px; background: var(--pl-accent-500); }
+
+  /* Reading pane */
+  .reader { display: flex; flex-direction: column; min-height: 0; }
+  .reader-head { padding: 16px 24px; border-bottom: 1px solid var(--pl-hairline); display: flex; align-items: center; gap: 8px; }
+  .reader-head .icons { margin-left: auto; display: flex; gap: 4px; }
+  .reader-content { flex: 1; overflow-y: auto; padding: 28px 32px 80px; }
+  .reader-subject { font-family: var(--pl-font-serif); font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; color: var(--pl-ink-1); font-weight: 400; margin: 0 0 18px; max-width: 720px; }
+  .reader-meta {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 0; max-width: 720px;
+    border-top: 1px solid var(--pl-hairline);
+    border-bottom: 1px solid var(--pl-hairline);
+    margin-bottom: 24px;
+  }
+  .reader-avatar { width: 40px; height: 40px; border-radius: 999px; background: var(--pl-accent-100); color: var(--pl-accent-700); display: grid; place-items: center; font-family: var(--pl-font-serif); font-size: 16px; }
+  .reader-from { font-size: 14px; color: var(--pl-ink-1); font-weight: 600; }
+  .reader-to   { font-size: 12px; color: var(--pl-ink-3); }
+  .reader-when { margin-left: auto; font-family: var(--pl-font-mono); font-size: 11px; color: var(--pl-ink-4); }
+
+  .reader-body { max-width: 720px; }
+  .reader-body p {
+    font-size: 14.5px; line-height: 1.7; color: var(--pl-ink-2); margin: 0 0 16px;
+  }
+  .reader-body p.signoff { color: var(--pl-ink-3); margin-top: 28px; }
+
+  .reply-bar { max-width: 720px; margin-top: 32px; padding: 16px; border: 1px solid var(--pl-hairline-strong); border-radius: 12px; background: var(--pl-paper-card); }
+  .reply-bar-actions { display: flex; gap: 6px; margin-top: 12px; }
+
+  @media (max-width: 1100px) {
+    .shell { grid-template-columns: 200px 320px 1fr; }
+  }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="pl-root">
+<div id="root"></div>
+
+<script type="text/babel" src="../dist/paperline-icons.global.jsx"></script>
+<script type="text/babel" src="../dist/paperline-components.global.jsx"></script>
+
+<script type="text/babel">
+const { useState, useMemo } = React;
+
+const FOLDERS = [
+  { id: "inbox",   icon: I.Inbox,    label: "Inbox",        count: 12, active: true },
+  { id: "starred", icon: I.Sparkles, label: "Starred",      count: 3 },
+  { id: "drafts",  icon: I.Edit,     label: "Drafts",       count: 2 },
+  { id: "sent",    icon: I.Share,    label: "Sent",         count: 0 },
+  { id: "archive", icon: I.Archive,  label: "Archive",      count: 0 },
+  { id: "trash",   icon: I.Trash,    label: "Trash",        count: 0 },
+];
+
+const LABELS = [
+  { color: "var(--pl-cat-amber)", name: "Clients" },
+  { color: "var(--pl-cat-green)", name: "Studio" },
+  { color: "var(--pl-cat-blue)",  name: "Newsletters" },
+  { color: "var(--pl-accent-500)", name: "Personal" },
+];
+
+const MESSAGES = [
+  {
+    id: 1, unread: true,
+    from: "Maya Tanaka", initials: "M",
+    subject: "Re: paperline rollout — phase 2",
+    preview: "Caught up on the dashboard PR. Loved how the slate ink reads against the warm card surface — it's the contrast we kept missing in the Material build. A few thoughts on the table density…",
+    when: "9:42 AM",
+    tags: [{ tone: "neutral", label: "Studio" }, { tone: "accent", label: "Action needed" }],
+    body: [
+      "Hi —",
+      "Caught up on the dashboard PR. Loved how the slate ink reads against the warm card surface — it's the contrast we kept missing in the Material build. A few thoughts on the table density before we ship:",
+      "1. The 14px row height feels a hair tight at 1.5x scale. Could we bump it to 16 for accessibility, and let the card itself be the dense layer?",
+      "2. The status badges in column 4 are doing two jobs (state + priority). I'd split them — state inline, priority as a left-edge dot.",
+      "3. The CSV export button is using accent-500 but it's not a primary path. Demote to ghost?",
+      "Otherwise it ships — really nice work. Let's talk on Thursday.",
+    ],
+    signoff: "— Maya",
+  },
+  {
+    id: 2, unread: true,
+    from: "Quill & Co. Newsletter", initials: "Q",
+    subject: "Issue 47 — The case for editorial product UI",
+    preview: "Five product teams that abandoned Material this quarter, and what they replaced it with. Plus: a Q&A with the lead designer at Marginalia on shipping serif at scale…",
+    when: "8:11 AM",
+    tags: [{ tone: "neutral", label: "Newsletter" }],
+  },
+  {
+    id: 3, unread: false,
+    from: "Folio Support", initials: "F",
+    subject: "Your invoice for May 2026",
+    preview: "Hi Vinny — your monthly Folio Studio plan was charged to the card ending 4242. Receipt attached. Thanks for being a Folio customer since 2024.",
+    when: "Yesterday",
+    tags: [{ tone: "neutral", label: "Receipts" }],
+  },
+  {
+    id: 4, unread: true,
+    from: "Theo Park", initials: "T",
+    subject: "Quick question on the icon set",
+    preview: "Are the 1.6-stroke icons available as an SVG sprite anywhere? I'm trying to inline them in a static site builder and the per-component import is overkill for our use case…",
+    when: "Yesterday",
+    tags: [{ tone: "neutral", label: "Clients" }],
+  },
+  {
+    id: 5, unread: false,
+    from: "GitHub", initials: "G",
+    subject: "[paperline] PR #34 ready for review",
+    preview: "vscarpenter opened pull request #34: 'Switch ink to slate, body to system stack.' 4 files changed, 38 additions, 22 deletions.",
+    when: "Mon",
+    tags: [{ tone: "neutral", label: "Code" }],
+  },
+  {
+    id: 6, unread: false,
+    from: "Marginalia Studio", initials: "Ma",
+    subject: "Brand audit — round two notes",
+    preview: "Following up from Friday. The team reviewed the second round of token explorations. The plum holds; the categorical palette needs one more pass on green vs moss…",
+    when: "Mon",
+    tags: [{ tone: "accent", label: "Clients" }],
+  },
+  {
+    id: 7, unread: false,
+    from: "Inkwell Press", initials: "I",
+    subject: "Print proof attached — please review",
+    preview: "Attaching the cover proof for the Field Notes annual. The serif lockup on page 1 came out beautifully on the cream stock — closer to the screen rendering than I expected.",
+    when: "Mar 28",
+    tags: [{ tone: "neutral", label: "Personal" }],
+  },
+];
+
+const App = () => {
+  const [folder, setFolder] = useState("inbox");
+  const [selectedId, setSelectedId] = useState(MESSAGES[0].id);
+  const [search, setSearch] = useState("");
+
+  const visible = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return MESSAGES;
+    return MESSAGES.filter(m =>
+      m.from.toLowerCase().includes(q) ||
+      m.subject.toLowerCase().includes(q) ||
+      m.preview.toLowerCase().includes(q)
+    );
+  }, [search]);
+
+  const selected = MESSAGES.find(m => m.id === selectedId) || MESSAGES[0];
+
+  return (
+    <div className="shell">
+
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div className="sidebar-head">
+          <I.Logo size={22} />
+          <span className="brand">Paperline Mail</span>
+        </div>
+
+        <div className="sidebar-compose">
+          <PLButton kind="primary" icon={I.Plus} fullWidth>Compose</PLButton>
+        </div>
+
+        <div className="sidebar-section">Mailboxes</div>
+        <div className="nav-list">
+          {FOLDERS.map(f => (
+            <div
+              key={f.id}
+              className={`nav-item${folder === f.id ? " active" : ""}`}
+              onClick={() => setFolder(f.id)}
+            >
+              <f.icon size={15} />
+              <span className="label">{f.label}</span>
+              {f.count > 0 && <span className="count">{f.count}</span>}
+            </div>
+          ))}
+        </div>
+
+        <div className="sidebar-section">Labels</div>
+        <div className="nav-list">
+          {LABELS.map(l => (
+            <div key={l.name} className="nav-item">
+              <span className="label-dot" style={{ background: l.color }} />
+              <span className="label">{l.name}</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: "auto", padding: 14, display: "flex", alignItems: "center", gap: 10, borderTop: "1px solid var(--pl-hairline)" }}>
+          <div style={{ width: 32, height: 32, borderRadius: 999, background: "var(--pl-accent-100)", color: "var(--pl-accent-700)", display: "grid", placeItems: "center", fontFamily: "var(--pl-font-serif)", fontSize: 14 }}>V</div>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontSize: 12.5, color: "var(--pl-ink-1)", fontWeight: 600 }}>Vinny Carpenter</div>
+            <div style={{ fontSize: 11, color: "var(--pl-ink-4)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>vinny@studio.com</div>
+          </div>
+          <a href="../index.html" title="All examples" style={{ color: "var(--pl-ink-4)", display: "inline-flex" }}><I.More size={16} /></a>
+        </div>
+      </aside>
+
+      {/* Message list */}
+      <section className="list">
+        <div className="list-head">
+          <h2>Inbox</h2>
+          <PLBadge tone="accent">{MESSAGES.filter(m => m.unread).length} new</PLBadge>
+        </div>
+        <div className="list-toolbar">
+          <div className="search-wrap">
+            <PLInput
+              icon={I.Search}
+              placeholder="Search mail…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+          <PLButton kind="ghost" size="sm" icon={I.Filter} />
+        </div>
+        <div className="list-scroll">
+          {visible.map(m => (
+            <div
+              key={m.id}
+              className={`row${m.unread ? " unread" : ""}${m.id === selectedId ? " selected" : ""}`}
+              onClick={() => setSelectedId(m.id)}
+            >
+              {m.unread && <span className="unread-dot" />}
+              <div className="avatar">{m.initials}</div>
+              <div className="body">
+                <div className="row-top">
+                  <span className="from">{m.from}</span>
+                  <span className="when">{m.when}</span>
+                </div>
+                <div className="subject">{m.subject}</div>
+                <div className="preview">{m.preview}</div>
+                {m.tags && m.tags.length > 0 && (
+                  <div className="row-tags">
+                    {m.tags.map(t => (
+                      <PLBadge key={t.label} tone={t.tone}>{t.label}</PLBadge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+          {visible.length === 0 && (
+            <div style={{ padding: 36 }}>
+              <PLEmptyState icon={I.Search} title="No matches" description="Try a different search term." />
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Reader */}
+      <section className="reader">
+        <div className="reader-head">
+          <PLButton kind="ghost" size="sm" icon={I.Archive}>Archive</PLButton>
+          <PLButton kind="ghost" size="sm" icon={I.Trash}>Delete</PLButton>
+          <PLButton kind="ghost" size="sm" icon={I.Tag}>Label</PLButton>
+          <div className="icons">
+            <PLButton kind="ghost" size="sm" icon={I.ChevLeft} />
+            <PLButton kind="ghost" size="sm" icon={I.ChevRight} />
+            <PLButton kind="ghost" size="sm" icon={I.More} />
+          </div>
+        </div>
+        <div className="reader-content">
+          <h1 className="reader-subject">{selected.subject}</h1>
+
+          <div className="reader-meta">
+            <div className="reader-avatar">{selected.initials}</div>
+            <div>
+              <div className="reader-from">{selected.from}</div>
+              <div className="reader-to">to me · vinny@studio.com</div>
+            </div>
+            <span className="reader-when">{selected.when}</span>
+          </div>
+
+          <div className="reader-body">
+            {(selected.body || [selected.preview]).map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+            {selected.signoff && <p className="signoff">{selected.signoff}</p>}
+          </div>
+
+          <div className="reply-bar">
+            <PLTextarea rows={3} placeholder={`Reply to ${selected.from}…`} />
+            <div className="reply-bar-actions">
+              <PLButton kind="primary" icon={I.Share}>Send</PLButton>
+              <PLButton kind="ghost" icon={I.Archive}>Save draft</PLButton>
+              <div style={{ flex: 1 }} />
+              <PLButton kind="ghost" icon={I.Tag} aria-label="Add label" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
