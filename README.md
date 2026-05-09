@@ -1,5 +1,7 @@
 # Paperline
 
+**[View the live demo →](https://vscarpenter.github.io/paperline/)**
+
 Paperline is a warm, editorial design system for any app: paper-toned surfaces, slate near-black ink, refined plum accents, a tri-modal type stack (Instrument Serif for heads, the system sans stack for body, JetBrains Mono for metadata), curated 1.6-stroke icons, and small React primitives built on CSS variables.
 
 ## What's Included
