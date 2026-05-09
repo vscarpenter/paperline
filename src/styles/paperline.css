@@ -3,7 +3,7 @@
    v1.0 · A reusable design system for any app
    ==========================================================================
    Drop this file into your project, link it in <head>, and load:
-     Instrument Sans, Instrument Serif, JetBrains Mono (Google Fonts)
+     Instrument Serif, JetBrains Mono (Google Fonts) — body uses the system stack
    Then either consume the CSS variables directly, or port them to your
    Tailwind config / styled system.
    ========================================================================== */
@@ -16,15 +16,15 @@
   --pl-paper-3:    #E4DCCC;   /* dividers, strong borders */
   --pl-paper-card: #FFFEFB;   /* card surface, slightly warmer than white */
 
-  --pl-hairline:        rgba(28, 26, 23, 0.08);
-  --pl-hairline-strong: rgba(28, 26, 23, 0.14);
+  --pl-hairline:        rgba(15, 23, 42, 0.08);
+  --pl-hairline-strong: rgba(15, 23, 42, 0.14);
 
-  /* === Ink (text) ==================================================== */
-  --pl-ink-1: #1C1A17;        /* primary text */
-  --pl-ink-2: #3A352E;        /* body */
-  --pl-ink-3: #6B6358;        /* secondary */
-  --pl-ink-4: #948C7E;        /* tertiary / placeholder */
-  --pl-ink-5: #BDB4A4;        /* disabled */
+  /* === Ink (slate near-black on warm paper) ========================== */
+  --pl-ink-1: #0F172A;        /* primary text — slate-900 */
+  --pl-ink-2: #1E293B;        /* body         — slate-800 */
+  --pl-ink-3: #475569;        /* secondary    — slate-600 */
+  --pl-ink-4: #94A3B8;        /* tertiary / placeholder — slate-400 */
+  --pl-ink-5: #CBD5E1;        /* disabled     — slate-300 */
 
   /* === Accent: Plum ================================================== */
   --pl-accent-50:  #F6F0FA;
@@ -54,10 +54,13 @@
   --pl-cat-moss:  #5C6B3C;
   --pl-cat-teal:  #3D6E6B;
 
-  /* === Type ========================================================== */
-  --pl-font-sans:  "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
-  --pl-font-serif: "Instrument Serif", ui-serif, Georgia, serif;
-  --pl-font-mono:  "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  /* === Type — tri-modal stack:
+         serif for headings (editorial gravitas)
+         system sans for body (legibility, zero network cost)
+         mono for metadata / eyebrows (technical signal)         ============ */
+  --pl-font-sans:  system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --pl-font-serif: "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
+  --pl-font-mono:  "JetBrains Mono", ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
 
   /* === Spacing (4px rhythm) ========================================== */
   --pl-s-0:  0px;
@@ -136,14 +139,14 @@
   --pl-paper-3:    #2D2A23;
   --pl-paper-card: #1F1D18;
 
-  --pl-hairline:        rgba(255, 250, 240, 0.07);
-  --pl-hairline-strong: rgba(255, 250, 240, 0.13);
+  --pl-hairline:        rgba(241, 245, 249, 0.07);
+  --pl-hairline-strong: rgba(241, 245, 249, 0.13);
 
-  --pl-ink-1: #F4EFE5;
-  --pl-ink-2: #D9D3C5;
-  --pl-ink-3: #9C9486;
-  --pl-ink-4: #6E675B;
-  --pl-ink-5: #4A453C;
+  --pl-ink-1: #F1F5F9;        /* slate-100 */
+  --pl-ink-2: #CBD5E1;        /* slate-300 */
+  --pl-ink-3: #94A3B8;        /* slate-400 */
+  --pl-ink-4: #64748B;        /* slate-500 */
+  --pl-ink-5: #475569;        /* slate-600 */
 
   --pl-accent-50:  #2A1F36;
   --pl-accent-100: #3A2A4A;
@@ -195,14 +198,15 @@
 
 /* === Common utility classes ========================================= */
 .pl-eyebrow {
-  font-size: 10.5px; font-weight: 600;
+  font-family: var(--pl-font-mono);
+  font-size: 10.5px; font-weight: 500;
   letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--pl-ink-4);
 }
 .pl-display { font-family: var(--pl-font-serif); font-size: 56px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; }
 .pl-h1      { font-family: var(--pl-font-serif); font-size: 36px; line-height: 1.1;  letter-spacing: -0.02em;  font-weight: 400; }
-.pl-h2      { font-family: var(--pl-font-sans);  font-size: 22px; line-height: 1.3;  letter-spacing: -0.01em;  font-weight: 600; }
-.pl-h3      { font-family: var(--pl-font-sans);  font-size: 16px; line-height: 1.35; letter-spacing: -0.005em; font-weight: 600; }
+.pl-h2      { font-family: var(--pl-font-serif); font-size: 24px; line-height: 1.25; letter-spacing: -0.015em; font-weight: 400; }
+.pl-h3      { font-family: var(--pl-font-serif); font-size: 18px; line-height: 1.3;  letter-spacing: -0.01em;  font-weight: 400; }
 .pl-body    { font-family: var(--pl-font-sans);  font-size: 13.5px; line-height: 1.6; }
 .pl-small   { font-family: var(--pl-font-sans);  font-size: 12px; line-height: 1.5; color: var(--pl-ink-3); }
 

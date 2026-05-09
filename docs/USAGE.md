@@ -13,7 +13,7 @@ Paperline ships in two shapes from the same repo:
 | A bundled React app (Vite, Next, Remix, CRA) | compiled ESM/CJS | `import { PLButton, I } from "paperline"` + `import "paperline/styles.css"` |
 | A static HTML page or prototype | `dist/` browser globals | Babel Standalone parses `dist/*.global.jsx`; components attach to `window` |
 
-Either way you need the three Google Fonts (Instrument Sans, Instrument Serif, JetBrains Mono) and a wrapping element with class `pl-root`.
+Either way you need the two Google Fonts (Instrument Serif for headings, JetBrains Mono for metadata — body uses your system sans stack) and a wrapping element with class `pl-root`.
 
 ### React app
 
@@ -46,7 +46,7 @@ Don't forget the font links in `index.html`:
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 ```
 
 ### Static HTML

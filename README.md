@@ -1,6 +1,6 @@
 # Paperline
 
-Paperline is a warm, editorial design system for any app: paper-toned surfaces, refined plum accents, Instrument Serif paired with Instrument Sans, curated 1.6-stroke icons, and small React primitives built on CSS variables.
+Paperline is a warm, editorial design system for any app: paper-toned surfaces, slate near-black ink, refined plum accents, a tri-modal type stack (Instrument Serif for heads, the system sans stack for body, JetBrains Mono for metadata), curated 1.6-stroke icons, and small React primitives built on CSS variables.
 
 ## What's Included
 
@@ -41,10 +41,10 @@ Open these in a browser (`npm run docs` → `http://localhost:8000`) to see the 
 
 ## Use the Tokens
 
-Load the fonts and CSS, then apply `pl-root` to your application shell.
+Load the two web fonts (the body sans uses your system stack, no network cost) and the CSS, then apply `pl-root` to your application shell.
 
 ```html
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="dist/paperline.css" />
 <body class="pl-root">...</body>
 ```
@@ -127,7 +127,8 @@ Add `pl-dark` or `data-theme="dark"` to any wrapping element.
 ## Design Principles
 
 - Paper, not panels: warm surfaces, hairlines, and soft depth.
-- Serif for voice, sans for work.
+- Tri-modal type: serif for every heading, system sans for body, mono for metadata and eyebrows.
+- Slate near-black ink on warm paper — cool over warm, the editorial classic.
 - Plum is the only primary accent and should be used sparingly.
 - Status colors are muted earth tones, never candy.
 - Icons are one stroke, one set, and inherit `currentColor`.

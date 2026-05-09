@@ -7,7 +7,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../dist/paperline.css" />
 
 <style>
@@ -126,7 +126,7 @@ const App = () => {
             A warm, editorial design system <em style={{ color: "var(--pl-accent-500)", fontStyle: "italic" }}>for any app</em>.
           </h1>
           <p style={{ fontSize: 17, lineHeight: 1.55, color: "var(--pl-ink-2)", maxWidth: 720, marginTop: 22 }}>
-            Paper surfaces, refined plum accent, an editorial serif paired with a humanist sans, a curated 1.6-stroke icon set, layered warm shadows. Built on CSS variables and small, composable React primitives — port to any framework.
+            Paper surfaces, slate near-black ink, refined plum accent, a tri-modal type stack — serif heads, system-sans body, mono metadata — a curated 1.6-stroke icon set, layered warm shadows. Built on CSS variables and small, composable React primitives — port to any framework.
           </p>
           <div style={{ display: "flex", gap: 10, marginTop: 28, flexWrap: "wrap" }}>
             {[["Tokens", "70+"], ["Components", "31"], ["Icons", "38"], ["Themes", "Light · Dark"], ["License", "Yours"]].map(([k, v]) => (
@@ -143,10 +143,10 @@ const App = () => {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           {[
             ["Paper, not panels", "Surfaces are warm off-white, not cool grey. Use shadow and hairline, not heavy fills."],
-            ["Serif speaks, sans works", "The serif is for moments — page titles, hero copy, empty states. The sans does every UI job."],
+            ["Serif for heads, system for body", "Every heading — display through h3 — sits in serif for editorial gravitas. The system sans stack carries body and UI: no web font on the critical path."],
             ["One accent, used sparingly", "Plum activates only the primary path and selection. Everything else stays in ink."],
             ["Status colors are muted", "Editorial earth tones, never candy. They mark, they don't shout."],
-            ["Numbers belong to mono", "Dates, IDs, counts, percentages — all monospaced and tabular."],
+            ["Mono carries metadata", "Eyebrows, dates, IDs, counts, percentages — all monospaced and tabular."],
             ["Icons are one stroke, one set", "Lucide-style 1.6 stroke at 24px. No emoji. Color comes from a category dot, not the icon itself."],
           ].map(([t, b], i) => (
             <div key={i} className="demo-cell" style={{ minHeight: 0 }}>
@@ -160,14 +160,14 @@ const App = () => {
         </div>
       </Section>
 
-      <Section num="02 — Typography" title="A serif for voice. A sans for work." blurb="Instrument Serif handles display moments. Instrument Sans does the heavy UI lifting. JetBrains Mono surfaces numbers and metadata.">
+      <Section num="02 — Typography" title="Tri-modal: serif, system sans, mono." blurb="Instrument Serif carries every heading for editorial gravitas. The system sans stack does the body — fast, legible, no network cost. JetBrains Mono signals metadata, eyebrows, and numerics.">
         <TypeRow name="Display"    sample="A quieter, warmer system." font="var(--pl-font-serif)" size={56} weight={400} lh={1.05} ls="-0.025em" css=".pl-display" />
         <TypeRow name="H1"         sample="Section heading"           font="var(--pl-font-serif)" size={36} weight={400} lh={1.1}  ls="-0.02em"  css=".pl-h1" />
-        <TypeRow name="H2"         sample="Subsection"                font="var(--pl-font-sans)"  size={22} weight={600} lh={1.3}  ls="-0.01em"  css=".pl-h2" />
-        <TypeRow name="H3"         sample="Card title"                font="var(--pl-font-sans)"  size={16} weight={600} lh={1.35} ls="-0.005em" css=".pl-h3" />
+        <TypeRow name="H2"         sample="Subsection"                font="var(--pl-font-serif)" size={24} weight={400} lh={1.25} ls="-0.015em" css=".pl-h2" />
+        <TypeRow name="H3"         sample="Card title"                font="var(--pl-font-serif)" size={18} weight={400} lh={1.3}  ls="-0.01em"  css=".pl-h3" />
         <TypeRow name="Body"       sample="Considered, well-paced reading copy." font="var(--pl-font-sans)" size={13.5} weight={400} lh={1.6} ls="0" css=".pl-body" />
         <TypeRow name="Small"      sample="Secondary UI text"          font="var(--pl-font-sans)"  size={12} weight={500} lh={1.5}  ls="0"       css=".pl-small" />
-        <TypeRow name="Eyebrow"    sample="OVERVIEW · 03"              font="var(--pl-font-sans)"  size={11} weight={600} lh={1.4}  ls="0.14em"  css=".pl-eyebrow" />
+        <TypeRow name="Eyebrow"    sample="OVERVIEW · 03"              font="var(--pl-font-mono)"  size={10.5} weight={500} lh={1.4} ls="0.14em" css=".pl-eyebrow" />
         <TypeRow name="Mono"       sample="2026·05·03 · v1.0"          font="var(--pl-font-mono)"  size={12} weight={500} lh={1.4}  ls="0"       css=".pl-mono" />
       </Section>
 
@@ -181,11 +181,11 @@ const App = () => {
           <Swatch name="Card"       value="#FFFEFB" varName="--pl-paper-card" />
         </div>
         <div className="grid-5" style={{ marginTop: 16 }}>
-          <Swatch name="Ink 1" value="#1C1A17" varName="--pl-ink-1" ink="light" />
-          <Swatch name="Ink 2" value="#3A352E" varName="--pl-ink-2" ink="light" />
-          <Swatch name="Ink 3" value="#6B6358" varName="--pl-ink-3" ink="light" />
-          <Swatch name="Ink 4" value="#948C7E" varName="--pl-ink-4" />
-          <Swatch name="Ink 5" value="#BDB4A4" varName="--pl-ink-5" />
+          <Swatch name="Ink 1" value="#0F172A" varName="--pl-ink-1" ink="light" />
+          <Swatch name="Ink 2" value="#1E293B" varName="--pl-ink-2" ink="light" />
+          <Swatch name="Ink 3" value="#475569" varName="--pl-ink-3" ink="light" />
+          <Swatch name="Ink 4" value="#94A3B8" varName="--pl-ink-4" />
+          <Swatch name="Ink 5" value="#CBD5E1" varName="--pl-ink-5" />
         </div>
 
         <div className="group-h" style={{ marginTop: 36 }}>Plum (accent)</div>
@@ -649,7 +649,7 @@ const App = () => {
       <Section num="09 — Usage" title="How to drop this into your app." blurb="Three files. Six minutes. Works in any framework that can render React or read CSS variables.">
         <div className="demo-cell">
           <div className="label">1 · Load fonts (Google Fonts)</div>
-          <pre className="pl-mono" style={{ background: "var(--pl-paper-1)", border: "1px solid var(--pl-hairline)", borderRadius: 8, padding: 14, fontSize: 11.5, color: "var(--pl-ink-2)", overflow: "auto", margin: 0 }}>{`<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />`}</pre>
+          <pre className="pl-mono" style={{ background: "var(--pl-paper-1)", border: "1px solid var(--pl-hairline)", borderRadius: 8, padding: 14, fontSize: 11.5, color: "var(--pl-ink-2)", overflow: "auto", margin: 0 }}>{`<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />`}</pre>
         </div>
         <div className="demo-cell" style={{ marginTop: 16 }}>
           <div className="label">2 · Link the tokens</div>
